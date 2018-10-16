@@ -35,11 +35,12 @@
   },
   "dependencies": {
     "dotenv": "^6.0.0",
-    "joi": "^13.7.0",
+    "joi": "^14.0.0",
     "lodash": "^4.17.4",
     "moment": "^2.22.2",
     "nodemailer": "^4.4.1",
     "pg": "^7.5.0",
+    "pg-monitor": "^1.0.0",
     "pg-promise": "^8.4.6",
     "winston": "^3.1.0"
   },
