@@ -2,8 +2,9 @@ import * as pgPromise from 'pg-promise';
 import * as config from '../config';
 import * as pgMonitor from './pg-monitor';
 import { getLogger } from '../helpers/logger';
+import { IExtensions } from '../models';
 
-interface IProjectDatabase extends pgPromise.IDatabase<{}> {
+export interface IProjectDatabase extends pgPromise.IDatabase<IExtensions> {
 }
 const log = getLogger({ module });
 const initOptions: pgPromise.IOptions<{}> = {
@@ -11,7 +12,7 @@ const initOptions: pgPromise.IOptions<{}> = {
 
 const pgp = pgPromise(initOptions);
 
-const db: pgPromise.IDatabase<{}> = pgp({
+const db: IProjectDatabase = pgp({
   host: config.db.HOST,
   port: config.db.PORT,
   database: config.db.NAME,
