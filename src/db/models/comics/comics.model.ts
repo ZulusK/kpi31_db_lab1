@@ -1,7 +1,14 @@
 import { IDatabase, IMain } from 'pg-promise';
 import { IResult } from 'pg-promise/typescript/pg-subset';
-import { default as sql } from './sql';
+import { default as sql } from './sql/index';
+import { ComicsCategory } from '../../types';
 
+export interface IComics {
+  title:string;
+  id?:number;
+  publish_date?:Date;
+  genre?:ComicsCategory;
+}
 export class ComicsModel {
 
   // if you need to access other repositories from here,
@@ -32,8 +39,8 @@ export class ComicsModel {
   }
 
   // Adds a new entity, and returns the new object;
-  add(name: string) {
-    return this.db.one(sql.add, name);
+  add(value:IComics) {
+    return this.db.one(sql.add, value);
   }
 
   // Tries to delete a entuty by id, and returns the number of records deleted;

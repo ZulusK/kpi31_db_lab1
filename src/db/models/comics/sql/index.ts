@@ -1,4 +1,4 @@
-import { sql } from '../../../utils';
+import { sql } from '../../../../utils/index';
 import { QueryFile } from 'pg-promise';
 
 export interface IQueryFilesTree {

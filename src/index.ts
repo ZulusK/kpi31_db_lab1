@@ -1,10 +1,9 @@
 import * as config from './config';
 import { getLogger } from './helpers/logger';
-import * as pgService from './services/pg';
+import * as db from './db';
+const log = getLogger({ name: 'index' });
+log.info('App started in %s mode', config.env.ENV);
 
-
-// @ts-ignore
-const db = pgService.getClient();
-const logger = getLogger({ name: 'index' });
-
-logger.info('App started in %s mode', config.env.ENV);
+db.init().then(() => {
+  log.info('db had initialized');
+});

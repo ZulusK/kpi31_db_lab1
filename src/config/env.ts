@@ -32,8 +32,8 @@ const { error, value: envVars } = Joi.validate<IExpectedEnv>(process.env as any,
 if (error) {
   throw new Error(`Config validation error: ${error.message}`);
 }
-const config: IEnvEnvironment = {
+const env: IEnvEnvironment = {
   IS_PRODUCTION: envVars.NODE_ENV === 'production',
   ENV: envVars.NODE_ENV,
 };
-export default config;
+export default env;

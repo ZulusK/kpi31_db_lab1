@@ -1,8 +1,8 @@
 import * as dotenv from 'dotenv';
-
+import * as path from 'path';
 dotenv.config({
-  path: '../.env',
+  path: path.resolve('.env'),
 });
 export { default as db } from './db';
 export { default as log } from './log';
-export { default as env } from './config';
+export { default as env } from './env';
