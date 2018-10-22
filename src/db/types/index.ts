@@ -1,7 +1,7 @@
 import sql from './sql';
 import { IProjectDatabase } from '../index';
 
-export enum ComicsCategory {
+export enum EComicsCategory {
   manga,
   'science fiction',
   fantasy,

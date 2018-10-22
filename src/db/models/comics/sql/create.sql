@@ -1,21 +1,10 @@
 CREATE TABLE IF NOT EXISTS comics
 (
   id                  SERIAL PRIMARY KEY,
-  title               varchar(100),
+  title               varchar(100) NOT NULL,
   category            comics_category,
-  publish_date        date,
-  serie               SERIAL,
+  publish_date        timestamp,
+  serie_id            integer NULL,
   rating              real,
-  FOREIGN KEY (serie) references series (id) ON DELETE SET NULL
-);
-DROP TYPE IF EXISTS comics_category CASCADE;
-CREATE TYPE comics_category AS ENUM
-(
-    'manga',
-    'science fiction',
-    'fantasy',
-    'action',
-    'horror',
-    'romance',
-    'adult'
+  FOREIGN KEY (serie_id) references series (id) ON DELETE SET NULL
 );

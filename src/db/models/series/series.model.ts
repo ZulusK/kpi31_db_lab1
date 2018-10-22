@@ -4,14 +4,12 @@ import { EComicsCategory } from '../../types';
 import { BaseModel, IBaseRecord } from '../BaseModel';
 import { IProjectDatabase } from '../../index';
 
-export interface IComics extends IBaseRecord{
+export interface ISerie extends IBaseRecord{
   title:string;
-  publish_date?:Date;
-  serieId?:number;
-  category?:EComicsCategory;
-  rating?:number;
+  publish_date:Date;
+  genre:EComicsCategory;
 }
-export class ComicsModel extends BaseModel<IComics>{
+export class SeriesModel extends BaseModel<ISerie>{
   constructor(db: IProjectDatabase, pgp: IMain) {
     super(db, pgp, sql);
   }

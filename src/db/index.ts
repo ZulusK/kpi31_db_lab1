@@ -9,8 +9,9 @@ export interface IProjectDatabase extends pgPromise.IDatabase<models.IDbRepos> ,
 const log = getLogger({ name:'db' });
 
 const initOptions: pgPromise.IOptions<models.IDbRepos> = {
-  extend(obj: models.IDbRepos) {
+  extend(obj: IProjectDatabase) {
     obj.comics = new models.ComicsModel(obj, pgp);
+    obj.series = new models.SeriesModel(obj, pgp);
   },
 };
 

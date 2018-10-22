@@ -1,4 +1,7 @@
 import { db } from '../../';
+import * as faker from 'faker';
+import { EComicsCategory } from '../../types';
+import * as _ from 'lodash';
 
 describe('Comics', () => {
   beforeAll(async () => {
@@ -9,11 +12,30 @@ describe('Comics', () => {
 });
 
 function testCreateOne() {
-  test('create new comics',  async () => {
-    const title = 'Amazing Spider man';
-    const doc = await db.comics.add({
-      title,
-    });
-    expect(doc).toHaveProperty('title', title);
+  const cases = [
+    {
+      title:faker.internet.userName(),
+    },
+    {
+      title:faker.hacker.phrase(),
+      publish_date:faker.date.past(),
+    },
+    {
+      title:faker.hacker.phrase(),
+      publish_date:new Date(),
+      category:faker.random.arrayElement(Object.values(EComicsCategory)),
+    },
+    {
+      title:faker.hacker.phrase(),
+      publish_date:new Date(),
+      category:faker.random.arrayElement(Object.values(EComicsCategory)),
+      rating:faker.random.number({ min:0, max:10 }),
+    },
+  ];
+  describe.each(cases)('test creation with %O', (data) => {
+    test('create new comics',  async () => {
+      const doc = await db.comics.insertOne(data);
+      expect(doc).toMatchObject(data);
+    },10);
   });
 }
