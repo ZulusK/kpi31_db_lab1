@@ -1,1 +1,2 @@
-SELECT * from s
+SELECT *
+FROM "comics"

@@ -11,9 +11,29 @@
         "${workspaceRoot}/node_modules/.bin/jest",
         "--runInBand",
         "--coverage",
-        "false"
+        "false",
+        "--forceExit",
+        "--detectOpenHandles"
       ],
-      "console": "internalConsole",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "name": "Debug current file Jest Tests",
+      "type": "node",
+      "request": "launch",
+      "port": 9229,
+      "runtimeArgs": [
+        "--inspect-brk",
+        "${workspaceRoot}/node_modules/.bin/jest",
+        "--runInBand",
+        "--coverage",
+        "false",
+        "--forceExit",
+        "--detectOpenHandles",
+        "${relativeFile}"
+      ],
+      "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
     }
   ]

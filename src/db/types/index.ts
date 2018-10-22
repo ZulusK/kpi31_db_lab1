@@ -1,5 +1,6 @@
 import sql from './sql';
 import { IProjectDatabase } from '../index';
+import { isNumber } from 'lodash';
 
 export enum EComicsCategory {
   manga,
@@ -11,6 +12,9 @@ export enum EComicsCategory {
   adult,
 }
 
-export async function init(db:IProjectDatabase) {
+export const comicsCategories: [EComicsCategory] = Object.keys(
+  EComicsCategory,
+).filter((f: any) => isNumber(EComicsCategory[f])) as any;
+export async function init(db: IProjectDatabase) {
   await db.none(sql.createComicsCategory);
 }

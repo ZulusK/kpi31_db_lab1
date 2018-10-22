@@ -3,7 +3,7 @@ import { IResult } from 'pg-promise/typescript/pg-subset';
 import { IProjectDatabase } from '../index';
 
 export interface IBaseRecord {
-  id: number;
+  id?: number;
 }
 
 export interface IBaseSqlQueryTree {
@@ -46,15 +46,15 @@ export class BaseModel<T extends IBaseRecord> {
 
   // Adds a new entity, and returns the new object;
   insertOne(value: T) {
-    return this.db.one(this.pgp.as.format(this.sql.add, value, { default: null }));
+    return this.db.one(
+      this.pgp.as.format(this.sql.add, value, { default: null }),
+    );
   }
 
   insertMany(values: [T]) {
-    return this
-      .db
-      .task('insert many comics rows',
-            t => t.batch(values.map(value => t.many(this.sql.add, value))),
-      );
+    return this.db.task('insert many comics rows', t =>
+      t.batch(values.map(value => t.many(this.sql.add, value))),
+    );
   }
 
   // Tries to delete a entity by id, and returns the number of records deleted;
