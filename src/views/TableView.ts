@@ -9,10 +9,12 @@ const config: TableUserConfig = {
 
 export interface TableViewOptions {
   maxLength: 25;
+  aggregate: string;
   cropStrategy: (text: string, opts: TableViewOptions) => string;
 }
 const defaultTableOpts: TableViewOptions = {
   maxLength: 25,
+  aggregate: '-',
   cropStrategy: cropTextAndAddDots,
 };
 
@@ -32,7 +34,26 @@ export function cropTextAndAddDots(
   }
   return text;
 }
-
+function normalize(
+  value: any,
+  index: number,
+  opts: TableViewOptions,
+  tableConfig: TableUserConfig,
+) {
+  if (!value) {
+    return opts.aggregate;
+  }
+  const strValue = String(value);
+  if (strValue.length > opts.maxLength) {
+    // @ts-ignore
+    tableConfig.columns[index] = {
+      // @ts-ignore
+      ...tableConfig.columns[index],
+      width: opts.maxLength,
+    };
+  }
+  return opts.cropStrategy(strValue, opts);
+}
 export default class TableView {
   public static buildTable(data: object[], opts = defaultTableOpts): string {
     const headers = data.length
@@ -45,21 +66,7 @@ export default class TableView {
     const tableData = [
       headers,
       ...data.map(row =>
-        Object.values(row).map((v: any, i: number) => {
-          if (!v) {
-            return 'null';
-          }
-          const strValue = String(v);
-          if (strValue.length > opts.maxLength) {
-            // @ts-ignore
-            tableConfig.columns[i] = {
-              // @ts-ignore
-              ...tableConfig.columns[i],
-              width: opts.maxLength,
-            };
-          }
-          return opts.cropStrategy(strValue, opts);
-        }),
+        Object.values(row).map((v, i) => normalize(v, i, opts, tableConfig)),
       ),
     ];
     return table(tableData, tableConfig);
