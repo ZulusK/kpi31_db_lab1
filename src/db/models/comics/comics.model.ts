@@ -16,4 +16,7 @@ export class ComicsModel extends BaseModel<IComics>{
   constructor(db: IProjectDatabase, pgp: IMain) {
     super(db, pgp, sql);
   }
+  allNames() {
+    return this.db.many<{title:string}>('SELECT title from comics');
+  }
 }

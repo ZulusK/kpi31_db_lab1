@@ -1,50 +1,67 @@
 // @ts-ignore
-import * as cTable from 'cli-table';
+import { table, getBorderCharacters, TableUserConfig } from 'table';
 import * as _ from 'lodash';
+import chalk from 'chalk';
 
-const tableBordersStyle = {
-  top: '═',
-  'top-mid': '╤',
-  'top-left': '╔',
-  'top-right': '╗',
-  bottom: '═',
-  'bottom-mid': '╧',
-  'bottom-left': '╚',
-  'bottom-right': '╝',
-  left: '║',
-  'left-mid': '╟',
-  mid: '─',
-  'mid-mid': '┼',
-  right: '║',
-  'right-mid': '╢',
-  middle: '│',
+const config: TableUserConfig = {
+  border: getBorderCharacters('honeywell'),
 };
+
+export interface TableViewOptions {
+  maxLength: 25;
+  cropStrategy: (text: string, opts: TableViewOptions) => string;
+}
+const defaultTableOpts: TableViewOptions = {
+  maxLength: 25,
+  cropStrategy: cropTextAndAddDots,
+};
+
+export function cropText(text: string, opts: TableViewOptions): string {
+  if (text.length > opts.maxLength) {
+    return text.substr(0, opts.maxLength);
+  }
+  return text;
+}
+
+export function cropTextAndAddDots(
+  text: string,
+  opts: TableViewOptions,
+): string {
+  if (text.length > opts.maxLength) {
+    return text.substr(0, opts.maxLength - 3) + '...';
+  }
+  return text;
+}
+
 export default class TableView {
-  private table: cTable;
-
-  public constructor(data: object[]) {
-    this.buildTable(data);
-  }
-
-  public set data(value:object[]) {
-    this.buildTable(value);
-  }
-
-  public toString():string {
-    return this.table.toString();
-  }
-
-  private buildTable(data:object[]) {
-    this.table = new cTable({
-      chars: tableBordersStyle ,
-      head: data.length ? Object.keys(data[0]) : undefined,
-    });
-    _.forEach(data, (v) => {
-      this.table.push(_.reduce(v,  (memo:string[], field:any) => {
-        memo.push(field || 'null');
-        return memo;
-      },
-                               []));
-    });
+  public static buildTable(data: object[], opts = defaultTableOpts): string {
+    const headers = data.length
+      ? Object.keys(data[0]).map(h => chalk.yellow(h))
+      : undefined;
+    const tableConfig: TableUserConfig = {
+      ...config,
+      columns: {},
+    };
+    const tableData = [
+      headers,
+      ...data.map(row =>
+        Object.values(row).map((v: any, i: number) => {
+          if (!v) {
+            return 'null';
+          }
+          const strValue = String(v);
+          if (strValue.length > opts.maxLength) {
+            // @ts-ignore
+            tableConfig.columns[i] = {
+              // @ts-ignore
+              ...tableConfig.columns[i],
+              width: opts.maxLength,
+            };
+          }
+          return opts.cropStrategy(strValue, opts);
+        }),
+      ),
+    ];
+    return table(tableData, tableConfig);
   }
 }

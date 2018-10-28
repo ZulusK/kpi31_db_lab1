@@ -35,6 +35,24 @@
       ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "name": "Debug",
+      "type": "node",
+      "request": "launch",
+      "port": 9229,
+      "runtimeArgs": [
+        "--inspect-brk",
+        "--nolazy",
+        "-r",
+        "ts-node/register",
+        "src/index.ts"
+      ],
+      "sourceMaps": true,
+      "cwd": "${workspaceRoot}",
+      "protocol": "inspector",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
     }
   ]
 }

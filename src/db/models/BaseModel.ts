@@ -8,6 +8,7 @@ export interface IBaseRecord {
 
 export interface IBaseSqlQueryTree {
   create: QueryFile;
+  list: QueryFile;
   drop: QueryFile;
   empty: QueryFile;
   add: QueryFile;
@@ -18,10 +19,10 @@ export interface IBaseSqlQueryTree {
 }
 
 export class BaseModel<T extends IBaseRecord> {
-  private db: IProjectDatabase;
+  protected db: IProjectDatabase;
   // @ts-ignore
-  private pgp: IMain;
-  private sql: IBaseSqlQueryTree;
+  protected pgp: IMain;
+  protected sql: IBaseSqlQueryTree;
 
   constructor(db: IProjectDatabase, pgp: IMain, sql: IBaseSqlQueryTree) {
     this.db = db;
@@ -75,5 +76,8 @@ export class BaseModel<T extends IBaseRecord> {
   // Returns the total number of users;
   total() {
     return this.db.one(this.sql.count, [], (a: { count: number }) => +a.count);
+  }
+  list({ offset = 0, limit = 20 }: { offset: number; limit: number }) {
+    return this.db.many(this.sql.list, { offset, limit });
   }
 }

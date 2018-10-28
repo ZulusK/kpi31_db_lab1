@@ -1,15 +1,5 @@
 import { sql } from '../../../../utils/index';
-import { QueryFile } from 'pg-promise';
+import { IBaseSqlQueryTree } from '../../BaseModel';
 
-export interface IQueryFilesTree {
-  create:QueryFile;
-  drop:QueryFile;
-  empty:QueryFile;
-  add:QueryFile;
-  delete:QueryFile;
-  findById:QueryFile;
-  count:QueryFile;
-  all:QueryFile;
-}
-const tree:IQueryFilesTree = sql.loadSqlFromDir(__dirname);
+const tree: IBaseSqlQueryTree = sql.loadSqlFromDir(__dirname);
 export default tree;
