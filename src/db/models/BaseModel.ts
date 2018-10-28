@@ -51,7 +51,7 @@ export class BaseModel<T extends IBaseRecord> {
     );
   }
 
-  insertMany(values: [T]) {
+  insertMany(values: T[]) {
     return this.db.task('insert many comics rows', t =>
       t.batch(values.map(value => t.many(this.sql.add, value))),
     );

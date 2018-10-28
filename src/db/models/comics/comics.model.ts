@@ -11,6 +11,7 @@ export interface IComics extends IBaseRecord{
   category?:EComicsCategory;
   rating?:number;
 }
+
 export class ComicsModel extends BaseModel<IComics>{
   constructor(db: IProjectDatabase, pgp: IMain) {
     super(db, pgp, sql);
