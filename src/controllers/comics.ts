@@ -5,6 +5,8 @@ import chalk from 'chalk';
 import * as figlet from 'figlet';
 const clear = require('clear');
 import TableView from '../views/TableView';
+import { comicsCategories } from '../db/types';
+import * as _ from 'lodash';
 
 enum Modes {
   CREATE = 'create new comics',
@@ -41,11 +43,24 @@ export async function start() {
   }
 }
 
-const createComicsItems = [
+const createComicsItems: any = [
   {
     name: 'title',
     type: 'input',
-    message: 'Title of comics',
+    message: 'Title:',
+  },
+  {
+    name: 'category',
+    type: 'list',
+    message: 'Category:',
+    choices: comicsCategories,
+  },
+  {
+    name: 'rating',
+    type: 'number',
+    max: 10,
+    min: 0,
+    message: 'Rating:',
   },
 ];
 
@@ -55,5 +70,7 @@ async function createComics() {
 }
 async function listComics() {
   const list = await db.comics.list({ offset: 0, limit: 20 });
+  const total = await db.comics.total();
   console.log(TableView.buildTable(list));
+  console.log(chalk.cyan('Total:'), total);
 }

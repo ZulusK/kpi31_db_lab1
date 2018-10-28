@@ -1,10 +1,10 @@
 INSERT INTO comics
 (
-    title,
-    publish_date,
-    serie_id,
-    category,
-    rating
+    "title",
+    "publish_date",
+    "serie_id",
+    "category",
+    "rating"
 )
 VALUES
 (

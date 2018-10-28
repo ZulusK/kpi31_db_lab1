@@ -12,8 +12,7 @@ export enum EComicsCategory {
   adult,
 }
 
-export const comicsCategories: EComicsCategory[] =
-  ts.keysFromEnum<EComicsCategory>(EComicsCategory);
+export const comicsCategories: string[] = ts.keysFromEnum(EComicsCategory);
 
 export async function init(db: IProjectDatabase) {
   await db.none(sql.createComicsCategory);
