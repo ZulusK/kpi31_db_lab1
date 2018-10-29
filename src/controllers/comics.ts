@@ -1,13 +1,11 @@
+const clear = require('clear');
+const keypress = require('keypress');
 import * as inquirer from 'inquirer';
 import { db } from '../db';
-// import TableView from '../views/TableView';
 import chalk from 'chalk';
 import * as figlet from 'figlet';
-
-const clear = require('clear');
 import TableView from '../views/TableView';
 import { comicsCategories } from '../db/types';
-import * as _ from 'lodash';
 import { comics } from '../test/utils';
 
 enum Modes {
@@ -37,7 +35,7 @@ export async function start() {
     const answers: any = await inquirer.prompt(menuItems);
     switch (answers.mode) {
       case Modes.LIST:
-        await listComics();
+        await interactiveList();
         break;
       case Modes.CREATE:
         await createComics();
@@ -77,11 +75,62 @@ async function createComics() {
   console.log(TableView.buildTable([await db.comics.insertOne(answers)]));
 }
 
-async function listComics() {
-  const list = await db.comics.list({ offset: 0, limit: 20 });
+async function listComics(offset = 0, limit = 20) {
+  const list = await db.comics.list({ offset, limit });
   const total = await db.comics.total();
+  clear();
   console.log(TableView.buildTable(list));
-  console.log(chalk.cyan('Total:'), total);
+  console.log(
+    chalk.cyan('total:'), total,
+    chalk.red('limit:'), limit,
+    chalk.magenta('offset:'), offset);
+}
+
+function interactiveList() {
+  let offset = 0;
+  let limit = 20;
+  listComics(offset, limit);
+  return new Promise((resolve) => {
+    const { stdin } = process;
+    keypress(process.stdin);
+    // @ts-ignore
+    stdin.setRawMode(true);
+    stdin.resume();
+    stdin.setEncoding('utf8');
+    const handler = async (__: any, key: any) => {
+      let affected = false;
+      switch (key.name) {
+        case 'q':
+          // @ts-ignore
+          process.stdin.pause();
+          process.stdin.removeListener('keypress', handler);
+          return resolve();
+        case 'left':
+          offset = Math.max(offset - limit, 0);
+          affected = true;
+          break;
+        case 'right':
+          offset = Math.max(offset + limit, 0);
+          affected = true;
+          break;
+        case 'up':
+          limit = Math.max(limit - 1, 1);
+          affected = true;
+          break;
+        case 'down':
+          limit = Math.min(limit + 1, 100);
+          affected = true;
+          break;
+      }
+      if (affected) {
+        await listComics(offset, limit);
+      }
+    };
+    process.stdin.on('keypress', handler);
+    // @ts-ignore
+    process.stdin.setRawMode(true);
+    process.stdin.resume();
+  });
 }
 
 const randomizeComicsItems: any = [{

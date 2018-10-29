@@ -9,6 +9,7 @@
   "rules": {
     "no-console": false,
     "member-access": false,
+    "no-parameter-reassignment": false,
     "no-var-requires": false,
     "object-literal-sort-keys": false,
     "ordered-imports": false,

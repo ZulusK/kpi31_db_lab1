@@ -81,6 +81,6 @@ export class BaseModel<T extends IBaseRecord> {
   }
 
   list({ offset = 0, limit = 20 }: { offset: number; limit: number }) {
-    return this.db.many(this.sql.list, { offset, limit });
+    return this.db.manyOrNone(this.sql.list, { offset, limit });
   }
 }

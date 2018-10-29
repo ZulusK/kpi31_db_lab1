@@ -12,6 +12,7 @@ export interface TableViewOptions {
   aggregate: string;
   cropStrategy: (text: string, opts: TableViewOptions) => string;
 }
+
 const defaultTableOpts: TableViewOptions = {
   maxLength: 25,
   aggregate: '-',
@@ -30,10 +31,11 @@ export function cropTextAndAddDots(
   opts: TableViewOptions,
 ): string {
   if (text.length > opts.maxLength) {
-    return `${text.substr(0, opts.maxLength - 3)}...`;
+    return `${ text.substr(0, opts.maxLength - 3) }...`;
   }
   return text;
 }
+
 function normalize(
   value: any,
   index: number,
@@ -54,8 +56,12 @@ function normalize(
   }
   return opts.cropStrategy(strValue, opts);
 }
+
 export default class TableView {
   public static buildTable(data: object[], opts = defaultTableOpts): string {
+    if (!data || !data.length) {
+      return '-';
+    }
     const headers = data.length
       ? Object.keys(data[0]).map(h => chalk.yellow(h))
       : undefined;

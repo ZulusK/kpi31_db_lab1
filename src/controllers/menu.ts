@@ -1,5 +1,6 @@
 import * as inquirer from 'inquirer';
 import * as comicsCtrl from './comics';
+
 const clear = require('clear');
 import * as figlet from 'figlet';
 import chalk from 'chalk';
@@ -8,11 +9,12 @@ enum Modes {
   OPERATIONS_WITH_COMICS = 'work with comics',
   EXIT = 'exit',
 }
+
 const menuItems = [
   {
     name: 'mode',
     type: 'list',
-    message: "What's next?",
+    message: 'What\'s next?',
     choices: [Modes.OPERATIONS_WITH_COMICS, Modes.EXIT],
     default: 0,
   },
@@ -32,6 +34,13 @@ export async function start() {
         await comicsCtrl.start();
         break;
       case Modes.EXIT:
+        clear();
+        console.log(
+          chalk.green(
+            figlet.textSync('Bye!', { font: 'Coinstak' }),
+          ),
+        );
+        process.exit(0);
         return;
     }
   }
