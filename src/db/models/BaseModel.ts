@@ -54,7 +54,9 @@ export class BaseModel<T extends IBaseRecord> {
 
   insertMany(values: T[]) {
     return this.db.task('insert many comics rows', t =>
-      t.batch(values.map(value => t.many(this.sql.add, value))),
+      t.batch(
+        values.map(
+          value => t.one(this.pgp.as.format(this.sql.add, value, { default: null })))),
     );
   }
 
@@ -77,6 +79,7 @@ export class BaseModel<T extends IBaseRecord> {
   total() {
     return this.db.one(this.sql.count, [], (a: { count: number }) => +a.count);
   }
+
   list({ offset = 0, limit = 20 }: { offset: number; limit: number }) {
     return this.db.many(this.sql.list, { offset, limit });
   }
