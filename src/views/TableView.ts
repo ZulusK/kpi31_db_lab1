@@ -58,9 +58,13 @@ function normalize(
 }
 
 export default class TableView {
-  public static buildTable(data: object[], opts = defaultTableOpts): string {
+  public static empty() {
+    return table([[chalk.redBright('empty')]], config);
+  }
+
+  public static buildTable(data: any[], opts = defaultTableOpts): string {
     if (!data || !data.length) {
-      return '-';
+      return TableView.empty();
     }
     const headers = data.length
       ? Object.keys(data[0]).map(h => chalk.yellow(h))

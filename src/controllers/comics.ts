@@ -1,9 +1,9 @@
 const clear = require('clear');
-const keypress = require('keypress');
 import * as inquirer from 'inquirer';
 import { db } from '../db';
 import chalk from 'chalk';
 import * as figlet from 'figlet';
+import { dynamicView } from '../views/DynamicView';
 import TableView from '../views/TableView';
 import { comicsCategories } from '../db/types';
 import { comics } from '../test/utils';
@@ -65,7 +65,7 @@ const createComicsItems: any = [
     name: 'rating',
     type: 'number',
     max: 10,
-    min: 0,
+    min: 1,
     message: 'Rating:',
   },
 ];
@@ -86,51 +86,53 @@ async function listComics(offset = 0, limit = 20) {
     chalk.magenta('offset:'), offset);
 }
 
-function interactiveList() {
+async function interactiveList() {
   let offset = 0;
-  let limit = 20;
-  listComics(offset, limit);
-  return new Promise((resolve) => {
-    const { stdin } = process;
-    keypress(process.stdin);
-    // @ts-ignore
-    stdin.setRawMode(true);
-    stdin.resume();
-    stdin.setEncoding('utf8');
-    const handler = async (__: any, key: any) => {
-      let affected = false;
-      switch (key.name) {
-        case 'q':
-          // @ts-ignore
-          process.stdin.pause();
-          process.stdin.removeListener('keypress', handler);
-          return resolve();
-        case 'left':
-          offset = Math.max(offset - limit, 0);
-          affected = true;
-          break;
-        case 'right':
-          offset = Math.max(offset + limit, 0);
-          affected = true;
-          break;
-        case 'up':
+  let limit = 5;
+  await listComics();
+  console.log('Use arrows to navigate');
+  console.log('Press "q" to exit');
+  await dynamicView(
+    [
+      {
+        key: 'up',
+        action: async () => {
           limit = Math.max(limit - 1, 1);
-          affected = true;
-          break;
-        case 'down':
+          await listComics(offset, limit);
+          console.log('Use arrows to navigate');
+          console.log('Press "q" to exit');
+        },
+      },
+      {
+        key: 'down',
+        action: async () => {
           limit = Math.min(limit + 1, 100);
-          affected = true;
-          break;
-      }
-      if (affected) {
-        await listComics(offset, limit);
-      }
-    };
-    process.stdin.on('keypress', handler);
-    // @ts-ignore
-    process.stdin.setRawMode(true);
-    process.stdin.resume();
-  });
+          await listComics(offset, limit);
+          console.log('Use arrows to navigate');
+          console.log('Press "q" to exit');
+        },
+      },
+      {
+        key: 'right',
+        action: async () => {
+          offset = Math.max(offset + limit, 0);
+          await listComics(offset, limit);
+          console.log('Use arrows to navigate');
+          console.log('Press "q" to exit');
+        },
+      },
+      {
+        key: 'left',
+        action: async () => {
+          offset = Math.max(offset - limit, 0);
+          await listComics(offset, limit);
+          console.log('Use arrows to navigate');
+          console.log('Press "q" to exit');
+        },
+      },
+    ],
+    'q');
+  clear();
 }
 
 const randomizeComicsItems: any = [{
