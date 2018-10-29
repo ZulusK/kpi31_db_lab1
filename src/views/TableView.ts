@@ -62,7 +62,7 @@ export default class TableView {
     return table([[chalk.redBright('empty')]], config);
   }
 
-  public static buildTable(data: any[], opts = defaultTableOpts): string {
+  public static buildTable(data: any, opts = defaultTableOpts): string {
     if (!data || !data.length) {
       return TableView.empty();
     }
@@ -75,7 +75,7 @@ export default class TableView {
     };
     const tableData = [
       headers,
-      ...data.map(row =>
+      ...data.map((row: any) =>
         Object.values(row).map((v, i) => normalize(v, i, opts, tableConfig)),
       ),
     ];

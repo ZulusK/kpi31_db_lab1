@@ -43,6 +43,9 @@ export async function start() {
       case Modes.RANDOMIZE:
         await randomize();
         break;
+      case Modes.DROP:
+        await drop();
+        break;
       case Modes.BACK:
         return;
     }
@@ -147,4 +150,14 @@ async function randomize() {
   const answers: any = await inquirer.prompt(randomizeComicsItems);
   const comicsRandomData = Array.from({ length: answers.count }, comics.randomData);
   console.log(TableView.buildTable(await db.comics.insertMany(comicsRandomData)));
+}
+
+async function drop() {
+  const answers: any = await inquirer.prompt({
+    name: 'confirm',
+    type: 'confirm',
+  });
+  if (answers.confirm) {
+    console.log(TableView.buildTable(await db.comics.empty()));
+  }
 }
