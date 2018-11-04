@@ -1,11 +1,11 @@
 INSERT INTO series
 (
-    title
+    "title",
+    "rating"
 )
 VALUES
 (
     ${title},
-    ${},
-    ${}
+    ${rating}
 )
 RETURNING *

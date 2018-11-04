@@ -1,15 +1,13 @@
-import {  IMain } from 'pg-promise';
+import { IMain } from 'pg-promise';
 import { default as sql } from './sql';
-import { EComicsCategory } from '../../types';
 import { BaseModel, IBaseRecord } from '../BaseModel';
 import { IProjectDatabase } from '../../index';
 
-export interface ISerie extends IBaseRecord{
-  title:string;
-  publish_date:Date;
-  genre:EComicsCategory;
+export interface ISeries extends IBaseRecord {
+  title: string;
+  rating: number;
 }
-export class SeriesModel extends BaseModel<ISerie>{
+export class SeriesModel extends BaseModel<ISeries> {
   constructor(db: IProjectDatabase, pgp: IMain) {
     super(db, pgp, sql);
   }

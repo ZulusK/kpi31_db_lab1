@@ -1,6 +1,6 @@
 import * as faker from 'faker';
-import { comicsCategories } from '../../db/types';
-import { IComics } from '../../db/models/comics/comics.model';
+import { comicsCategories } from '../db/types';
+import { IComics } from '../db/models/comics/comics.model';
 
 export function randomData(): IComics {
   return {

@@ -1,2 +1,2 @@
-SELECT * FROM users WHERE id = $1;
+SELECT * FROM series WHERE id = $1;
 
