@@ -16,9 +16,9 @@ export enum CharacterGender {
   female,
 }
 export const comicsCategories: string[] = ts.keysFromEnum(ComicsCategory);
-export const charactersGenders: string[] = ts.keysFromEnum(CharacterGender);
+export const genders: string[] = ts.keysFromEnum(CharacterGender);
 
 export async function init(db: IProjectDatabase) {
   await db.none(sql.createComicsCategory);
-  await db.none(sql.createCharacterGender);
+  await db.none(sql.createGenders);
 }

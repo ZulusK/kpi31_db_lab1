@@ -1,2 +1,1 @@
-SELECT * from comics
-LIMIT ${limit} OFFSET ${offset};
+SELECT * from comics LIMIT ${limit} OFFSET ${offset};

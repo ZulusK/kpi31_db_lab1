@@ -1,1 +1,1 @@
-TRUNCATE TABLE ${schema~}.comics CASCADE
+TRUNCATE TABLE comics CASCADE

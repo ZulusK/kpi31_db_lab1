@@ -1,5 +1,5 @@
 import * as faker from 'faker';
-import { charactersGenders } from '../db/types';
+import { genders } from '../db/types';
 import { ICharacter } from '../db/models/character/characters.model';
 
 const superPrefix = [
@@ -45,6 +45,6 @@ export function randomData(): ICharacter {
     ).join(', '),
     dob: faker.date.past(),
     is_hero: faker.random.boolean(),
-    gender: faker.random.arrayElement(charactersGenders) as any,
+    gender: faker.random.arrayElement(genders) as any,
   };
 }

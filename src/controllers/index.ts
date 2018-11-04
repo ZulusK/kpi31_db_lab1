@@ -8,6 +8,10 @@ inquirer.registerPrompt(
 );
 inquirer.registerPrompt('datetime', require('inquirer-datepicker-prompt'));
 inquirer.registerPrompt('number', require('inquirer-number-plus'));
+inquirer.registerPrompt(
+  'autocomplete',
+  require('inquirer-autocomplete-prompt'),
+);
 
 export const randomizeEntitiesPromptItems: any = [
   {

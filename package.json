@@ -19,6 +19,7 @@
   "devDependencies": {
     "@types/chalk": "^2.2.0",
     "@types/cli-table": "^0.3.0",
+    "@types/country-list": "^1.1.0",
     "@types/debug": "^0.0.31",
     "@types/delay": "^3.1.0",
     "@types/dotenv": "^4.0.3",
@@ -54,6 +55,7 @@
     "clear": "^0.1.0",
     "cli-table": "^0.3.1",
     "clui": "^0.3.6",
+    "country-list": "^1.1.0",
     "debug": "^4.1.0",
     "dotenv": "^6.0.0",
     "faker": "^4.1.0",
