@@ -7,13 +7,14 @@ import InteractiveTableView, {
   IListFunctionArgs,
 } from '../views/InteractiveTableView';
 import TableView from '../views/TableView';
-import { series } from '../test/utils';
+import { series } from '../utils';
+import { randomizeEntitiesPromptItems } from '.';
 
 enum Modes {
-  CREATE = 'create new serie',
+  CREATE = 'create new',
   BACK = 'back',
-  LIST = 'list series',
-  RANDOMIZE = 'fill db with random entities',
+  LIST = 'list',
+  RANDOMIZE = 'fill db with random data',
   DROP = 'clean DB',
 }
 
@@ -46,16 +47,6 @@ const createSeriesItems: any = [
     message: 'Rating:',
   },
 ];
-const randomizeSeriesItems: any = [
-  {
-    name: 'count',
-    type: 'number',
-    max: 50,
-    min: 1,
-    message: 'Count:',
-  },
-];
-
 export async function start() {
   clear();
   console.log(
@@ -107,7 +98,7 @@ function interactiveList() {
 }
 
 async function randomize() {
-  const answers: any = await inquirer.prompt(randomizeSeriesItems);
+  const answers: any = await inquirer.prompt(randomizeEntitiesPromptItems);
   const seriesRandomData = Array.from(
     { length: answers.count },
     series.randomData,

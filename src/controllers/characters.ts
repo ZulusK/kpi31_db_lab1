@@ -7,10 +7,9 @@ import InteractiveTableView, {
   IListFunctionArgs,
 } from '../views/InteractiveTableView';
 import TableView from '../views/TableView';
-import { comicsCategories } from '../db/types';
-import { comics } from '../utils';
+import { charactersGenders } from '../db/types';
 import { randomizeEntitiesPromptItems } from '.';
-
+import { characters } from '../utils';
 enum Modes {
   CREATE = 'create new',
   BACK = 'back',
@@ -34,32 +33,48 @@ const menuItems = [
     default: 0,
   },
 ];
-
-const createComicsItems: any = [
+const createCharacterItems: any = [
   {
-    name: 'title',
+    name: 'nickname',
     type: 'input',
-    message: 'Title:',
+    message: 'Nickname:',
+    default: 'Batman',
   },
   {
-    name: 'category',
+    name: 'name',
+    type: 'input',
+    message: 'Name:',
+    default: 'Bruce Wayne',
+  },
+  {
+    name: 'gender',
     type: 'list',
-    message: 'Category:',
-    choices: comicsCategories,
+    message: 'Gender:',
+    choices: charactersGenders,
+    default: 'male',
   },
   {
-    name: 'rating',
-    type: 'number',
-    max: 10,
-    min: 1,
-    message: 'Rating:',
+    name: 'skills',
+    type: 'input',
+    message: 'Skills (in one line):',
+  },
+  {
+    name: 'is_hero',
+    type: 'confirm',
+    message: 'Is hero?',
+  },
+  {
+    name: 'dob',
+    type: 'datetime',
+    message: 'Date of birth:',
+    format: ['d', '/', 'm', '/', 'yyyy'],
   },
 ];
 
 export async function start() {
   clear();
   console.log(
-    chalk.redBright(figlet.textSync('Comics', { font: 'Isometric3' })),
+    chalk.magentaBright(figlet.textSync('Characters', { font: 'Isometric3' })),
   );
   while (true) {
     const answers: any = await inquirer.prompt(menuItems);
@@ -68,7 +83,7 @@ export async function start() {
         await interactiveList();
         break;
       case Modes.CREATE:
-        await createComics();
+        await createCharacter();
         break;
       case Modes.RANDOMIZE:
         await randomize();
@@ -82,14 +97,14 @@ export async function start() {
   }
 }
 
-async function createComics() {
-  const answers: any = await inquirer.prompt(createComicsItems);
-  console.log(TableView.buildTable([await db.comics.insertOne(answers)]));
+async function createCharacter() {
+  const answers: any = await inquirer.prompt(createCharacterItems);
+  console.log(TableView.buildTable([await db.characters.insertOne(answers)]));
 }
 
-async function listComics({ offset, limit }: IListFunctionArgs) {
-  const list = await db.comics.list({ offset, limit });
-  const total = await db.comics.total();
+async function listCharacters({ offset, limit }: IListFunctionArgs) {
+  const list = await db.characters.list({ offset, limit });
+  const total = await db.characters.total();
   clear();
   console.log(TableView.buildTable(list));
   console.log(
@@ -103,17 +118,17 @@ async function listComics({ offset, limit }: IListFunctionArgs) {
 }
 
 function interactiveList() {
-  return InteractiveTableView.display(listComics, 0, 10);
+  return InteractiveTableView.display(listCharacters, 0, 10);
 }
 
 async function randomize() {
   const answers: any = await inquirer.prompt(randomizeEntitiesPromptItems);
-  const comicsRandomData = Array.from(
+  const charactersRandomData = Array.from(
     { length: answers.count },
-    comics.randomData,
+    characters.randomData,
   );
   console.log(
-    TableView.buildTable(await db.comics.insertMany(comicsRandomData)),
+    TableView.buildTable(await db.characters.insertMany(charactersRandomData)),
   );
 }
 

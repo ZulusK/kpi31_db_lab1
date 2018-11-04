@@ -1,23 +1,30 @@
 import * as inquirer from 'inquirer';
 import * as comicsCtrl from './comics';
 import * as seriesCtrl from './series';
+import * as charactersCtrl from './characters';
 
 const clear = require('clear');
 import * as figlet from 'figlet';
 import chalk from 'chalk';
 
 enum Modes {
-  OPERATIONS_WITH_COMICS = 'work with comics',
-  OPERATIONS_WITH_SERIES = 'work with series',
-  EXIT = 'exit',
+  OPERATIONS_WITH_COMICS = 'Work with comics',
+  OPERATIONS_WITH_SERIES = 'Work with series',
+  OPERATIONS_WITH_CHARACTERS = 'Work with characters',
+  EXIT = 'Exit',
 }
 
 const menuItems = [
   {
     name: 'mode',
     type: 'list',
-    message: 'What\'s next?',
-    choices: [Modes.OPERATIONS_WITH_COMICS, Modes.OPERATIONS_WITH_SERIES, Modes.EXIT],
+    message: "What's next?",
+    choices: [
+      Modes.OPERATIONS_WITH_COMICS,
+      Modes.OPERATIONS_WITH_SERIES,
+      Modes.OPERATIONS_WITH_CHARACTERS,
+      Modes.EXIT,
+    ],
     default: 0,
   },
 ];
@@ -38,13 +45,12 @@ export async function start() {
       case Modes.OPERATIONS_WITH_SERIES:
         await seriesCtrl.start();
         break;
+      case Modes.OPERATIONS_WITH_CHARACTERS:
+        await charactersCtrl.start();
+        break;
       case Modes.EXIT:
         clear();
-        console.log(
-          chalk.green(
-            figlet.textSync('Bye!', { font: 'Coinstak' }),
-          ),
-        );
+        console.log(chalk.green(figlet.textSync('Bye!', { font: 'Coinstak' })));
         process.exit(0);
         return;
     }

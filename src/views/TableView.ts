@@ -31,7 +31,7 @@ export function cropTextAndAddDots(
   opts: TableViewOptions,
 ): string {
   if (text.length > opts.maxLength) {
-    return `${ text.substr(0, opts.maxLength - 3) }...`;
+    return `${text.substr(0, opts.maxLength - 3)}...`;
   }
   return text;
 }
@@ -42,8 +42,11 @@ function normalize(
   opts: TableViewOptions,
   tableConfig: TableUserConfig,
 ) {
-  if (!value) {
+  if (_.isNull(value) || _.isUndefined(value)) {
     return opts.aggregate;
+  }
+  if (_.isBoolean(value)) {
+    return value ? '+' : '-';
   }
   const strValue = String(value);
   if (strValue.length > opts.maxLength) {

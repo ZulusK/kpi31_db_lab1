@@ -4,20 +4,22 @@ import * as pgMonitor from './diagnostic';
 import { getLogger } from '../helpers/logger';
 import * as models from './models';
 import * as types from './types';
-export interface IProjectDatabase extends pgPromise.IDatabase<models.IDbRepos> , models.IDbRepos {
-}
-const log = getLogger({ name:'db' });
+export interface IProjectDatabase
+  extends pgPromise.IDatabase<models.IDbRepos>,
+    models.IDbRepos {}
+const log = getLogger({ name: 'db' });
 
 const initOptions: pgPromise.IOptions<models.IDbRepos> = {
   extend(obj: IProjectDatabase) {
     obj.comics = new models.ComicsModel(obj, pgp);
     obj.series = new models.SeriesModel(obj, pgp);
+    obj.characters = new models.CharactersModel(obj, pgp);
   },
 };
 
 const pgp = pgPromise(initOptions);
 
-const db: IProjectDatabase  = pgp({
+const db: IProjectDatabase = pgp({
   host: config.db.HOST,
   port: config.db.PORT,
   database: config.db.NAME,
@@ -27,11 +29,11 @@ const db: IProjectDatabase  = pgp({
 pgMonitor.init(initOptions);
 
 db.connect()
-  .then((obj) => {
+  .then(obj => {
     log.info('connected');
     obj.done(); // success, release the connection;
   })
-  .catch((error) => {
+  .catch(error => {
     log.error('unable to connect');
     log.error('%O', error.message || error);
     throw error;
@@ -41,12 +43,10 @@ export async function init() {
   try {
     await types.init(db);
     await models.init(db);
-  }catch (error) {
+  } catch (error) {
     log.error(error);
     throw error;
   }
 }
 
-export {
-  db,
-};
+export { db };
