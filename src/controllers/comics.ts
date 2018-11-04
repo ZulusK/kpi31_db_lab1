@@ -12,11 +12,12 @@ import { comics } from '../utils';
 import { randomizeEntitiesPromptItems } from '.';
 
 enum Modes {
-  CREATE = 'create new',
-  BACK = 'back',
-  LIST = 'list',
-  RANDOMIZE = 'fill db with random data',
-  DROP = 'clean DB',
+  CREATE = 'Create new',
+  BACK = '<-',
+  LIST = 'List all comics',
+  RANDOMIZE = 'Fill db with random data',
+  SEARCH = 'Search in comics',
+  DROP = 'Clean DB',
 }
 
 const menuItems = [
@@ -26,6 +27,7 @@ const menuItems = [
     message: "What's next?",
     choices: [
       Modes.CREATE,
+      Modes.SEARCH,
       Modes.LIST,
       Modes.RANDOMIZE,
       Modes.DROP,
@@ -35,7 +37,7 @@ const menuItems = [
   },
 ];
 
-const createComicsItems: any = [
+const createPromptItems: any = [
   {
     name: 'title',
     type: 'input',
@@ -56,6 +58,14 @@ const createComicsItems: any = [
   },
 ];
 
+const searchPromptItems: any = [
+  {
+    name: 'query',
+    type: 'input',
+    message: 'What are you looking for?',
+  },
+];
+
 export async function start() {
   clear();
   console.log(
@@ -64,6 +74,9 @@ export async function start() {
   while (true) {
     const answers: any = await inquirer.prompt(menuItems);
     switch (answers.mode) {
+      case Modes.SEARCH:
+        await search();
+        break;
       case Modes.LIST:
         await interactiveList();
         break;
@@ -74,7 +87,7 @@ export async function start() {
         await randomize();
         break;
       case Modes.DROP:
-        await drop();
+        await empty();
         break;
       case Modes.BACK:
         return;
@@ -83,7 +96,7 @@ export async function start() {
 }
 
 async function createComics() {
-  const answers: any = await inquirer.prompt(createComicsItems);
+  const answers: any = await inquirer.prompt(createPromptItems);
   console.log(TableView.buildTable([await db.comics.insertOne(answers)]));
 }
 
@@ -117,7 +130,7 @@ async function randomize() {
   );
 }
 
-async function drop() {
+async function empty() {
   const answers: any = await inquirer.prompt({
     name: 'confirm',
     type: 'confirm',
@@ -125,4 +138,9 @@ async function drop() {
   if (answers.confirm) {
     console.log(TableView.buildTable(await db.comics.empty()));
   }
+}
+
+async function search() {
+  const answers: any = await inquirer.prompt(searchPromptItems);
+  console.log(TableView.buildTable(await db.comics.fts(answers.query)));
 }

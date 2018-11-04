@@ -18,13 +18,13 @@ export interface IBaseSqlQueryTree {
   all: QueryFile;
 }
 
-export class BaseModel<T extends IBaseRecord> {
+export class BaseModel<T extends IBaseRecord, S extends IBaseSqlQueryTree> {
   protected db: IProjectDatabase;
   // @ts-ignore
   protected pgp: IMain;
-  protected sql: IBaseSqlQueryTree;
+  protected sql: S;
 
-  constructor(db: IProjectDatabase, pgp: IMain, sql: IBaseSqlQueryTree) {
+  constructor(db: IProjectDatabase, pgp: IMain, sql: S) {
     this.db = db;
     this.pgp = pgp; // library's root, if ever needed;
     this.sql = sql;
@@ -55,8 +55,10 @@ export class BaseModel<T extends IBaseRecord> {
   insertMany(values: T[]) {
     return this.db.task('insert many comics rows', t =>
       t.batch(
-        values.map(
-          value => t.one(this.pgp.as.format(this.sql.add, value, { default: null })))),
+        values.map(value =>
+          t.one(this.pgp.as.format(this.sql.add, value, { default: null })),
+        ),
+      ),
     );
   }
 
