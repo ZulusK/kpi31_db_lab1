@@ -7,115 +7,40 @@ import InteractiveTableView, {
   IListFunctionArgs,
 } from '../views/InteractiveTableView';
 import TableView from '../views/TableView';
-import { genders } from '../db/types';
 import { randomizeEntitiesPromptItems } from '.';
 import { authors } from '../utils';
 import * as _ from 'lodash';
-import * as authorsRow from './authors.row';
-import { filterCountries } from '../utils/countries';
-
-enum Modes {
-  CREATE = 'create new',
-  BACK = '<-',
-  LIST = 'list',
-  RANDOMIZE = 'fill db with random data',
-  UPDATE_AUTHOR = 'update one author',
-  DROP = 'clean DB',
-}
-
-const menuItems = [
-  {
-    name: 'mode',
-    type: 'list',
-    message: "What's next?",
-    choices: [
-      Modes.CREATE,
-      Modes.LIST,
-      Modes.RANDOMIZE,
-      Modes.DROP,
-      Modes.UPDATE_AUTHOR,
-      Modes.BACK,
-    ],
-    default: 0,
-  },
-];
-const createPromptItems: any = [
-  {
-    name: 'name',
-    type: 'input',
-    message: 'Name:',
-    default: 'Stan Lee',
-  },
-  {
-    name: 'gender',
-    type: 'list',
-    message: 'Gender:',
-    choices: genders,
-    default: 'male',
-  },
-  {
-    name: 'country',
-    type: 'autocomplete',
-    source: (__: any, input: string) => {
-      return Promise.resolve(filterCountries(input));
-    },
-    message: 'Country:',
-    default: 'USA',
-  },
-  {
-    name: 'dob',
-    type: 'datetime',
-    message: 'Date of birth:',
-    format: ['d', '/', 'm', '/', 'yyyy'],
-    initial: new Date('1950-01-01 12:30'),
-  },
-];
-const selectRow: any = [
-  {
-    name: 'row',
-    type: 'autocomplete',
-    source: async (__: any, input: string) => {
-      if (input && input.length > 0) {
-        const rows = await Promise.resolve(db.authors.searchById(input));
-        return rows.map(row => ({
-          value: `${row.id}/${row.name}`,
-        }));
-      }
-      return [];
-    },
-    message: 'Id of author:',
-  },
-];
-
+import * as authorsRow from './selectedAuthor';
+import { authorsPrompts, AuthorsModes } from './prompts';
 export async function start() {
   clear();
   console.log(chalk.cyan(figlet.textSync('Authors', { font: 'Isometric3' })));
   while (true) {
-    const answers: any = await inquirer.prompt(menuItems);
+    const answers: any = await inquirer.prompt(authorsPrompts.menu);
     switch (answers.mode) {
-      case Modes.LIST:
+      case AuthorsModes.LIST:
         await interactiveList();
         break;
-      case Modes.CREATE:
+      case AuthorsModes.CREATE:
         await create();
         break;
-      case Modes.RANDOMIZE:
+      case AuthorsModes.RANDOMIZE:
         await randomize();
         break;
-      case Modes.DROP:
+      case AuthorsModes.DROP:
         await drop();
         break;
-      case Modes.UPDATE_AUTHOR:
+      case AuthorsModes.SELECT:
         await select();
         break;
-      case Modes.BACK:
+      case AuthorsModes.BACK:
         return;
     }
   }
 }
 
 async function create() {
-  const answers: any = await inquirer.prompt(createPromptItems);
+  const answers: any = await inquirer.prompt(authorsPrompts.create);
   console.log(TableView.buildTable([await db.authors.insertOne(answers)]));
 }
 
@@ -157,7 +82,7 @@ async function drop() {
 async function select() {
   let row: string = '';
   while (!row) {
-    const answers = (await inquirer.prompt(selectRow)) as any;
+    const answers = (await inquirer.prompt(authorsPrompts.selectById)) as any;
     row = answers.row;
   }
   await authorsRow.start(row.split('/')[0]);

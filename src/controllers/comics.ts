@@ -7,64 +7,9 @@ import InteractiveTableView, {
   IListFunctionArgs,
 } from '../views/InteractiveTableView';
 import TableView from '../views/TableView';
-import { comicsCategories } from '../db/types';
 import { comics } from '../utils';
 import { randomizeEntitiesPromptItems } from '.';
-
-enum Modes {
-  CREATE = 'Create new',
-  BACK = '<-',
-  LIST = 'List all comics',
-  RANDOMIZE = 'Fill db with random data',
-  SEARCH = 'Search in comics',
-  DROP = 'Clean DB',
-}
-
-const menuItems = [
-  {
-    name: 'mode',
-    type: 'list',
-    message: "What's next?",
-    choices: [
-      Modes.CREATE,
-      Modes.SEARCH,
-      Modes.LIST,
-      Modes.RANDOMIZE,
-      Modes.DROP,
-      Modes.BACK,
-    ],
-    default: 0,
-  },
-];
-
-const createPromptItems: any = [
-  {
-    name: 'title',
-    type: 'input',
-    message: 'Title:',
-  },
-  {
-    name: 'category',
-    type: 'list',
-    message: 'Category:',
-    choices: comicsCategories,
-  },
-  {
-    name: 'rating',
-    type: 'number',
-    max: 10,
-    min: 1,
-    message: 'Rating:',
-  },
-];
-
-const searchPromptItems: any = [
-  {
-    name: 'query',
-    type: 'input',
-    message: 'What are you looking for?',
-  },
-];
+import { comicsPrompts, ComicsModes } from './prompts';
 
 export async function start() {
   clear();
@@ -72,31 +17,31 @@ export async function start() {
     chalk.redBright(figlet.textSync('Comics', { font: 'Isometric3' })),
   );
   while (true) {
-    const answers: any = await inquirer.prompt(menuItems);
+    const answers: any = await inquirer.prompt(comicsPrompts.menu);
     switch (answers.mode) {
-      case Modes.SEARCH:
+      case ComicsModes.SEARCH:
         await search();
         break;
-      case Modes.LIST:
+      case ComicsModes.LIST:
         await interactiveList();
         break;
-      case Modes.CREATE:
+      case ComicsModes.CREATE:
         await createComics();
         break;
-      case Modes.RANDOMIZE:
+      case ComicsModes.RANDOMIZE:
         await randomize();
         break;
-      case Modes.DROP:
+      case ComicsModes.DROP:
         await empty();
         break;
-      case Modes.BACK:
+      case ComicsModes.BACK:
         return;
     }
   }
 }
 
 async function createComics() {
-  const answers: any = await inquirer.prompt(createPromptItems);
+  const answers: any = await inquirer.prompt(comicsPrompts.create);
   console.log(TableView.buildTable([await db.comics.insertOne(answers)]));
 }
 
@@ -141,7 +86,7 @@ async function empty() {
 }
 
 async function search() {
-  const answers: any = await inquirer.prompt(searchPromptItems);
+  const answers: any = await inquirer.prompt(comicsPrompts.search);
   console.log(
     TableView.buildTable(await db.comics.fts(answers.query), {
       maxLength: 0,
