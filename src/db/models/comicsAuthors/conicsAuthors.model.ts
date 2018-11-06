@@ -1,17 +1,24 @@
 import { IMain } from 'pg-promise';
-import { default as sql } from './sql';
-import { BaseModel, IBaseRecord, IBaseSqlQueryTree } from '../BaseModel';
+import { default as sql, IComicsAuthorsSqlQueryTree } from './sql';
+import { BaseModel, IBaseRecord } from '../BaseModel';
 import { IProjectDatabase } from '../../index';
 
 export interface IComicsAuthors extends IBaseRecord {
-  title: string;
-  rating: number;
+  comicsId: number;
+  authorId: number;
 }
 export class ComicsAuthorsModel extends BaseModel<
   IComicsAuthors,
-  IBaseSqlQueryTree
+  IComicsAuthorsSqlQueryTree
 > {
   constructor(db: IProjectDatabase, pgp: IMain) {
     super(db, pgp, sql);
+  }
+  listComicsOfAuthor(authorId: number, { limit = 20, offset = 0 }) {
+    return this.db.manyOrNone(this.sql.listComicsByAuthor, {
+      authorId,
+      limit,
+      offset,
+    });
   }
 }
