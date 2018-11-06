@@ -68,7 +68,7 @@ export class BaseModel<T extends IBaseRecord, S extends IBaseSqlQueryTree> {
   }
 
   // Tries to find a user from id;
-  findById(id: number) {
+  findById(id: any) {
     return this.db.oneOrNone(this.sql.findById, +id);
   }
 

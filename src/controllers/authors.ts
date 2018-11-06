@@ -1,5 +1,4 @@
 const clear = require('clear');
-const countryList = require('country-list')();
 import * as inquirer from 'inquirer';
 import { db } from '../db';
 import chalk from 'chalk';
@@ -12,30 +11,15 @@ import { genders } from '../db/types';
 import { randomizeEntitiesPromptItems } from '.';
 import { authors } from '../utils';
 import * as _ from 'lodash';
-
-const countries = countryList.getData();
-
-const filterFunc = _.flow([
-  regexp =>
-    _.filter(countries, ({ code, name }) => {
-      return regexp.test(code) || regexp.test(name);
-    }),
-  filtered => _.map(filtered, ({ name }) => name),
-]);
-
-function filterCountries(input: string) {
-  if (input && input.length > 0) {
-    const regexp = new RegExp(`.*${input}.*`, 'i');
-    return filterFunc(regexp);
-  }
-  return countries;
-}
+import * as authorsRow from './authors.row';
+import { filterCountries } from '../utils/countries';
 
 enum Modes {
   CREATE = 'create new',
-  BACK = 'back',
+  BACK = '<-',
   LIST = 'list',
   RANDOMIZE = 'fill db with random data',
+  UPDATE_AUTHOR = 'update one author',
   DROP = 'clean DB',
 }
 
@@ -49,6 +33,7 @@ const menuItems = [
       Modes.LIST,
       Modes.RANDOMIZE,
       Modes.DROP,
+      Modes.UPDATE_AUTHOR,
       Modes.BACK,
     ],
     default: 0,
@@ -85,6 +70,22 @@ const createPromptItems: any = [
     initial: new Date('1950-01-01 12:30'),
   },
 ];
+const selectRow: any = [
+  {
+    name: 'row',
+    type: 'autocomplete',
+    source: async (__: any, input: string) => {
+      if (input && input.length > 0) {
+        const rows = await Promise.resolve(db.authors.searchById(input));
+        return rows.map(row => ({
+          value: `${row.id}/${row.name}`,
+        }));
+      }
+      return [];
+    },
+    message: 'Id of author:',
+  },
+];
 
 export async function start() {
   clear();
@@ -103,6 +104,9 @@ export async function start() {
         break;
       case Modes.DROP:
         await drop();
+        break;
+      case Modes.UPDATE_AUTHOR:
+        await select();
         break;
       case Modes.BACK:
         return;
@@ -148,4 +152,13 @@ async function drop() {
   if (answers.confirm) {
     console.log(TableView.buildTable(await db.comics.empty()));
   }
+}
+
+async function select() {
+  let row: string = '';
+  while (!row) {
+    const answers = (await inquirer.prompt(selectRow)) as any;
+    row = answers.row;
+  }
+  await authorsRow.start(row.split('/')[0]);
 }

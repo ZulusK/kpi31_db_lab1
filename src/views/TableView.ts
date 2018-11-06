@@ -8,9 +8,9 @@ const config: TableUserConfig = {
 };
 
 export interface TableViewOptions {
-  maxLength: 25;
-  aggregate: string;
-  cropStrategy: (text: string, opts: TableViewOptions) => string;
+  maxLength?: number;
+  aggregate?: string;
+  cropStrategy?: (text: string, opts: TableViewOptions) => string;
 }
 
 const defaultTableOpts: TableViewOptions = {
@@ -20,7 +20,7 @@ const defaultTableOpts: TableViewOptions = {
 };
 
 export function cropText(text: string, opts: TableViewOptions): string {
-  if (text.length > opts.maxLength) {
+  if (opts.maxLength && text.length > opts.maxLength) {
     return text.substr(0, opts.maxLength);
   }
   return text;
@@ -30,7 +30,7 @@ export function cropTextAndAddDots(
   text: string,
   opts: TableViewOptions,
 ): string {
-  if (text.length > opts.maxLength) {
+  if (opts.maxLength && text.length > opts.maxLength) {
     return `${text.substr(0, opts.maxLength - 3)}...`;
   }
   return text;
@@ -49,7 +49,7 @@ function normalize(
     return value ? '+' : '-';
   }
   const strValue = String(value);
-  if (strValue.length > opts.maxLength) {
+  if (opts.maxLength && opts.maxLength && strValue.length > opts.maxLength) {
     // @ts-ignore
     tableConfig.columns[index] = {
       // @ts-ignore
@@ -57,7 +57,7 @@ function normalize(
       width: opts.maxLength,
     };
   }
-  return opts.cropStrategy(strValue, opts);
+  return opts.cropStrategy ? opts.cropStrategy(strValue, opts) : strValue;
 }
 
 export default class TableView {
@@ -65,7 +65,8 @@ export default class TableView {
     return table([[chalk.redBright('empty')]], config);
   }
 
-  public static buildTable(data: any, opts = defaultTableOpts): string {
+  public static buildTable(data: any, opts: TableViewOptions = {}): string {
+    opts = _.defaultsDeep(opts, defaultTableOpts);
     if (!data || !data.length) {
       return TableView.empty();
     }

@@ -7,7 +7,7 @@ import InteractiveTableView, {
   IListFunctionArgs,
 } from '../views/InteractiveTableView';
 import TableView from '../views/TableView';
-import { charactersGenders } from '../db/types';
+import { genders } from '../db/types';
 import { randomizeEntitiesPromptItems } from '.';
 import { characters } from '../utils';
 enum Modes {
@@ -50,7 +50,7 @@ const createCharacterItems: any = [
     name: 'gender',
     type: 'list',
     message: 'Gender:',
-    choices: charactersGenders,
+    choices: genders,
     default: 'male',
   },
   {

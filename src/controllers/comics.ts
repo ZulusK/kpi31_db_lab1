@@ -142,5 +142,9 @@ async function empty() {
 
 async function search() {
   const answers: any = await inquirer.prompt(searchPromptItems);
-  console.log(TableView.buildTable(await db.comics.fts(answers.query)));
+  console.log(
+    TableView.buildTable(await db.comics.fts(answers.query), {
+      maxLength: 0,
+    }),
+  );
 }

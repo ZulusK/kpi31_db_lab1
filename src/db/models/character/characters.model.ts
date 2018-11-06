@@ -1,7 +1,7 @@
 import { IMain } from 'pg-promise';
 import { default as sql } from './sql';
 import { CharacterGender } from '../../types';
-import { BaseModel, IBaseRecord } from '../BaseModel';
+import { BaseModel, IBaseRecord, IBaseSqlQueryTree } from '../BaseModel';
 import { IProjectDatabase } from '../../index';
 
 export interface ICharacter extends IBaseRecord {
@@ -13,7 +13,7 @@ export interface ICharacter extends IBaseRecord {
   skills: string;
 }
 
-export class CharactersModel extends BaseModel<ICharacter> {
+export class CharactersModel extends BaseModel<ICharacter, IBaseSqlQueryTree> {
   constructor(db: IProjectDatabase, pgp: IMain) {
     super(db, pgp, sql);
   }

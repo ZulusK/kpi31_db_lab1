@@ -19,6 +19,6 @@ CREATE TABLE IF NOT EXISTS comics
   rating              real,
   FOREIGN KEY (serie_id) references series (id) ON DELETE SET NULL
 );
-
+CREATE INDEX IF NOT EXISTS comics_id_index ON comics (publish_date DESC,serie_id);
 CREATE INDEX IF NOT EXISTS idx_fts_comics ON comics
   USING gin(make_tsvector(title, category));

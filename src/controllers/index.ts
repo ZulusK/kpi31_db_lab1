@@ -24,5 +24,5 @@ export const randomizeEntitiesPromptItems: any = [
 ];
 export async function start() {
   clear();
-  menu.start();
+  await menu.start();
 }

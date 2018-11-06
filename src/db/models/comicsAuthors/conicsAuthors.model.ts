@@ -3,11 +3,14 @@ import { default as sql } from './sql';
 import { BaseModel, IBaseRecord, IBaseSqlQueryTree } from '../BaseModel';
 import { IProjectDatabase } from '../../index';
 
-export interface ISeries extends IBaseRecord {
+export interface IComicsAuthors extends IBaseRecord {
   title: string;
   rating: number;
 }
-export class SeriesModel extends BaseModel<ISeries, IBaseSqlQueryTree> {
+export class ComicsAuthorsModel extends BaseModel<
+  IComicsAuthors,
+  IBaseSqlQueryTree
+> {
   constructor(db: IProjectDatabase, pgp: IMain) {
     super(db, pgp, sql);
   }

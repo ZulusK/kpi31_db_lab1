@@ -15,6 +15,7 @@ const initOptions: pgPromise.IOptions<models.IDbRepos> = {
     obj.series = new models.SeriesModel(obj, pgp);
     obj.characters = new models.CharactersModel(obj, pgp);
     obj.authors = new models.AuthorsModel(obj, pgp);
+    obj.comicsAuthors = new models.ComicsAuthorsModel(obj, pgp);
   },
 };
 
