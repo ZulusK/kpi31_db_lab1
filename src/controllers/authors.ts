@@ -7,11 +7,14 @@ import InteractiveTableView, {
   IListFunctionArgs,
 } from '../views/InteractiveTableView';
 import TableView from '../views/TableView';
-import { randomizeEntitiesPromptItems } from '.';
 import { authors } from '../utils';
 import * as _ from 'lodash';
 import * as authorsRow from './selectedAuthor';
-import { authorsPrompts, AuthorsModes } from './prompts';
+import {
+  authorsPrompts,
+  AuthorsModes,
+  randomizeEntitiesPromptItems,
+} from './prompts';
 export async function start() {
   clear();
   console.log(chalk.cyan(figlet.textSync('Authors', { font: 'Isometric3' })));

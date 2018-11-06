@@ -7,69 +7,12 @@ import InteractiveTableView, {
   IListFunctionArgs,
 } from '../views/InteractiveTableView';
 import TableView from '../views/TableView';
-import { genders } from '../db/types';
-import { randomizeEntitiesPromptItems } from '.';
 import { characters } from '../utils';
-enum Modes {
-  CREATE = 'create new',
-  BACK = 'back',
-  LIST = 'list',
-  RANDOMIZE = 'fill db with random data',
-  DROP = 'clean DB',
-}
-
-const menuItems = [
-  {
-    name: 'mode',
-    type: 'list',
-    message: "What's next?",
-    choices: [
-      Modes.CREATE,
-      Modes.LIST,
-      Modes.RANDOMIZE,
-      Modes.DROP,
-      Modes.BACK,
-    ],
-    default: 0,
-  },
-];
-const createCharacterItems: any = [
-  {
-    name: 'nickname',
-    type: 'input',
-    message: 'Nickname:',
-    default: 'Batman',
-  },
-  {
-    name: 'name',
-    type: 'input',
-    message: 'Name:',
-    default: 'Bruce Wayne',
-  },
-  {
-    name: 'gender',
-    type: 'list',
-    message: 'Gender:',
-    choices: genders,
-    default: 'male',
-  },
-  {
-    name: 'skills',
-    type: 'input',
-    message: 'Skills (in one line):',
-  },
-  {
-    name: 'is_hero',
-    type: 'confirm',
-    message: 'Is hero?',
-  },
-  {
-    name: 'dob',
-    type: 'datetime',
-    message: 'Date of birth:',
-    format: ['d', '/', 'm', '/', 'yyyy'],
-  },
-];
+import {
+  CharactersModes,
+  randomizeEntitiesPromptItems,
+  charactersPrompts,
+} from './prompts';
 
 export async function start() {
   clear();
@@ -77,28 +20,28 @@ export async function start() {
     chalk.magentaBright(figlet.textSync('Characters', { font: 'Isometric3' })),
   );
   while (true) {
-    const answers: any = await inquirer.prompt(menuItems);
+    const answers: any = await inquirer.prompt(charactersPrompts.menu);
     switch (answers.mode) {
-      case Modes.LIST:
+      case CharactersModes.LIST:
         await interactiveList();
         break;
-      case Modes.CREATE:
+      case CharactersModes.CREATE:
         await createCharacter();
         break;
-      case Modes.RANDOMIZE:
+      case CharactersModes.RANDOMIZE:
         await randomize();
         break;
-      case Modes.DROP:
+      case CharactersModes.DROP:
         await drop();
         break;
-      case Modes.BACK:
+      case CharactersModes.BACK:
         return;
     }
   }
 }
 
 async function createCharacter() {
-  const answers: any = await inquirer.prompt(createCharacterItems);
+  const answers: any = await inquirer.prompt(charactersPrompts.create);
   console.log(TableView.buildTable([await db.characters.insertOne(answers)]));
 }
 

@@ -9,7 +9,7 @@ INSERT INTO comics
 VALUES
 (
     ${title},
-    ${publish_date},
+    ${publishDate},
     ${serieId},
     ${category},
     ${rating}

@@ -8,8 +8,11 @@ import InteractiveTableView, {
 } from '../views/InteractiveTableView';
 import TableView from '../views/TableView';
 import { comics } from '../utils';
-import { randomizeEntitiesPromptItems } from '.';
-import { comicsPrompts, ComicsModes } from './prompts';
+import {
+  comicsPrompts,
+  randomizeEntitiesPromptItems,
+  ComicsModes,
+} from './prompts';
 
 export async function start() {
   clear();

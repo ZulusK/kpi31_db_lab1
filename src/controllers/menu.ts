@@ -7,14 +7,7 @@ import * as charactersCtrl from './characters';
 const clear = require('clear');
 import * as figlet from 'figlet';
 import chalk from 'chalk';
-
-enum Modes {
-  OPERATIONS_WITH_COMICS = 'Work with comics',
-  OPERATIONS_WITH_SERIES = 'Work with series',
-  OPERATIONS_WITH_CHARACTERS = 'Work with characters',
-  OPERATIONS_WITH_AUTHORS = 'Work with authors',
-  EXIT = 'Exit',
-}
+import { MenuModes } from './prompts';
 
 const menuItems = [
   {
@@ -22,11 +15,11 @@ const menuItems = [
     type: 'list',
     message: "What's next?",
     choices: [
-      Modes.OPERATIONS_WITH_COMICS,
-      Modes.OPERATIONS_WITH_SERIES,
-      Modes.OPERATIONS_WITH_CHARACTERS,
-      Modes.OPERATIONS_WITH_AUTHORS,
-      Modes.EXIT,
+      MenuModes.OPERATIONS_WITH_COMICS,
+      MenuModes.OPERATIONS_WITH_SERIES,
+      MenuModes.OPERATIONS_WITH_CHARACTERS,
+      MenuModes.OPERATIONS_WITH_AUTHORS,
+      MenuModes.EXIT,
     ],
     default: 0,
   },
@@ -42,19 +35,19 @@ export async function start() {
     );
     const answers: any = await inquirer.prompt(menuItems);
     switch (answers.mode) {
-      case Modes.OPERATIONS_WITH_COMICS:
+      case MenuModes.OPERATIONS_WITH_COMICS:
         await comicsCtrl.start();
         break;
-      case Modes.OPERATIONS_WITH_SERIES:
+      case MenuModes.OPERATIONS_WITH_SERIES:
         await seriesCtrl.start();
         break;
-      case Modes.OPERATIONS_WITH_CHARACTERS:
+      case MenuModes.OPERATIONS_WITH_CHARACTERS:
         await charactersCtrl.start();
         break;
-      case Modes.OPERATIONS_WITH_AUTHORS:
+      case MenuModes.OPERATIONS_WITH_AUTHORS:
         await authorsCtrl.start();
         break;
-      case Modes.EXIT:
+      case MenuModes.EXIT:
         clear();
         console.log(chalk.green(figlet.textSync('Bye!', { font: 'Coinstak' })));
         process.exit(0);

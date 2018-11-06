@@ -8,73 +8,40 @@ import InteractiveTableView, {
 } from '../views/InteractiveTableView';
 import TableView from '../views/TableView';
 import { series } from '../utils';
-import { randomizeEntitiesPromptItems } from '.';
+import {
+  seriesPrompts,
+  SeriesModes,
+  randomizeEntitiesPromptItems,
+} from './prompts';
 
-enum Modes {
-  CREATE = 'create new',
-  BACK = 'back',
-  LIST = 'list',
-  RANDOMIZE = 'fill db with random data',
-  DROP = 'clean DB',
-}
-
-const menuItems = [
-  {
-    name: 'mode',
-    type: 'list',
-    message: "What's next?",
-    choices: [
-      Modes.CREATE,
-      Modes.LIST,
-      Modes.RANDOMIZE,
-      Modes.DROP,
-      Modes.BACK,
-    ],
-    default: 0,
-  },
-];
-const createSeriesItems: any = [
-  {
-    name: 'title',
-    type: 'input',
-    message: 'Title:',
-  },
-  {
-    name: 'rating',
-    type: 'number',
-    max: 10,
-    min: 1,
-    message: 'Rating:',
-  },
-];
 export async function start() {
   clear();
   console.log(
     chalk.blueBright(figlet.textSync('Series', { font: 'Isometric3' })),
   );
   while (true) {
-    const answers: any = await inquirer.prompt(menuItems);
+    const answers: any = await inquirer.prompt(seriesPrompts.menu);
     switch (answers.mode) {
-      case Modes.LIST:
+      case SeriesModes.LIST:
         await interactiveList();
         break;
-      case Modes.CREATE:
+      case SeriesModes.CREATE:
         await createSeries();
         break;
-      case Modes.RANDOMIZE:
+      case SeriesModes.RANDOMIZE:
         await randomize();
         break;
-      case Modes.DROP:
+      case SeriesModes.DROP:
         await drop();
         break;
-      case Modes.BACK:
+      case SeriesModes.BACK:
         return;
     }
   }
 }
 
 async function createSeries() {
-  const answers: any = await inquirer.prompt(createSeriesItems);
+  const answers: any = await inquirer.prompt(seriesPrompts.create);
   console.log(TableView.buildTable([await db.series.insertOne(answers)]));
 }
 

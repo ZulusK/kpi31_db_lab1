@@ -13,15 +13,6 @@ inquirer.registerPrompt(
   require('inquirer-autocomplete-prompt'),
 );
 
-export const randomizeEntitiesPromptItems: any = [
-  {
-    name: 'count',
-    type: 'number',
-    max: 50,
-    min: 1,
-    message: 'Count:',
-  },
-];
 export async function start() {
   clear();
   await menu.start();
