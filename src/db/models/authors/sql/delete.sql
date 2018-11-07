@@ -1,1 +1,1 @@
-DELETE FROM authors WHERE id = $1
+DELETE FROM authors WHERE id = ${id}

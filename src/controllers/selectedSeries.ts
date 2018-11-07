@@ -26,6 +26,11 @@ export async function start(selectedSeriesId: string) {
       case SelectedSeriesModes.VIEW_ALL_COMICS:
         await interactiveListComics(series);
         break;
+      case SelectedSeriesModes.DELETE:
+        if (await deleteSelected(series)) {
+          return;
+        }
+        break;
       case SelectedSeriesModes.BACK:
         return;
     }
@@ -53,4 +58,13 @@ function listComics(series: ISeries) {
 
 function interactiveListComics(series: ISeries) {
   return InteractiveTableView.display(listComics(series), 0, 10);
+}
+
+async function deleteSelected(series: ISeries): Promise<boolean> {
+  const answers = (await inquirer.prompt(selectedSeriesPrompts.delete)) as any;
+  if (answers.confirm) {
+    await db.series.deleteById(series.id as any);
+    return true;
+  }
+  return false;
 }

@@ -1,6 +1,6 @@
 import * as pgPromise from 'pg-promise';
 import * as config from '../config/index';
-import * as pgMonitor from './diagnostic';
+// import * as pgMonitor from './diagnostic';
 import { getLogger } from '../helpers/logger';
 import * as models from './models';
 import * as types from './types';
@@ -28,7 +28,7 @@ const db: IProjectDatabase = pgp({
   user: config.db.USER,
   password: config.db.PASSWORD,
 });
-pgMonitor.init(initOptions);
+// pgMonitor.init(initOptions);
 
 db.connect()
   .then(obj => {

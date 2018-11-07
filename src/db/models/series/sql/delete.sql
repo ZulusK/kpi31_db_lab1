@@ -1,1 +1,1 @@
-DELETE FROM series WHERE id = $1
+DELETE FROM series WHERE id = ${id}

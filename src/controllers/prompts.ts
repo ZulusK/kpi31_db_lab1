@@ -378,12 +378,19 @@ export const selectedAuthorPrompts = {
         SelectedAuthorModes.UPDATE,
         SelectedAuthorModes.ADD_COMICS,
         SelectedAuthorModes.VIEW_ALL_COMICS,
+        SelectedAuthorModes.DELETE,
         SelectedAuthorModes.BACK,
       ],
       default: 0,
     },
   ],
-
+  delete: [
+    {
+      name: 'confirm',
+      type: 'confirm',
+      message: 'Are you sure?',
+    },
+  ],
   getUpdatePrompt: (author: IAuthor) => [
     {
       name: 'name',
@@ -501,9 +508,17 @@ export const selectedSeriesPrompts = {
       choices: [
         SelectedSeriesModes.UPDATE,
         SelectedSeriesModes.VIEW_ALL_COMICS,
+        SelectedSeriesModes.DELETE,
         SelectedSeriesModes.BACK,
       ],
       default: 0,
+    },
+  ],
+  delete: [
+    {
+      name: 'confirm',
+      type: 'confirm',
+      message: 'Are you sure?',
     },
   ],
   getUpdatePrompt: (series: ISeries) => [

@@ -33,6 +33,11 @@ export async function start(selectedAuthorId: string) {
       case SelectedAuthorModes.VIEW_ALL_COMICS:
         await interactiveListComics(author);
         break;
+      case SelectedAuthorModes.DELETE:
+        if (await deleteSelected(author)) {
+          return;
+        }
+        break;
       case SelectedAuthorModes.BACK:
         return;
     }
@@ -46,10 +51,14 @@ async function update(author: IAuthor) {
 }
 async function addComics(author: IAuthor) {
   const answers: any = await inquirer.prompt(comicsPrompts.selectById);
-  await db.comicsAuthors.insertOne({
-    comicsId: +answers.comicsId,
-    authorId: +(author.id as any),
-  });
+  try {
+    await db.comicsAuthors.insertOne({
+      comicsId: +answers.comicsId,
+      authorId: +(author.id as any),
+    });
+  } catch (err) {
+    console.log('You trying to insert duplicated value');
+  }
 }
 
 function listComics(author: IAuthor) {
@@ -67,4 +76,13 @@ function listComics(author: IAuthor) {
 
 function interactiveListComics(author: IAuthor) {
   return InteractiveTableView.display(listComics(author), 0, 10);
+}
+
+async function deleteSelected(author: IAuthor): Promise<boolean> {
+  const answers = (await inquirer.prompt(selectedAuthorPrompts.delete)) as any;
+  if (answers.confirm) {
+    await db.authors.deleteById(author.id as any);
+    return true;
+  }
+  return false;
 }
