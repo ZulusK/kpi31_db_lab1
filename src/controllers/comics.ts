@@ -26,6 +26,9 @@ export async function start() {
       case ComicsModes.SEARCH:
         await search();
         break;
+      case ComicsModes.BACK_SEARCH:
+        await backSearch();
+        break;
       case ComicsModes.LIST:
         await interactiveList();
         break;
@@ -138,4 +141,13 @@ function advancedSearch(args: any) {
 async function interactiveAdvancedSearch() {
   const answers = await inquirer.prompt(comicsPrompts.advancedSearch);
   return InteractiveTableView.display(advancedSearch(answers as any), 0, 10);
+}
+
+async function backSearch() {
+  const answers: any = await inquirer.prompt(comicsPrompts.search);
+  console.log(
+    TableView.buildTable(await db.comics.backFts(answers.query), {
+      maxLength: 0,
+    }),
+  );
 }

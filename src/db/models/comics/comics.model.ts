@@ -22,6 +22,9 @@ export class ComicsModel extends BaseModel<IComics, IComicsSqlQueryTree> {
   fts(query: string) {
     return this.db.manyOrNone(this.sql.fullTextSearch, [query]);
   }
+  backFts(query: string) {
+    return this.db.manyOrNone(this.sql.backFullTextSearch, [query]);
+  }
   searchById(id: string) {
     return this.db.manyOrNone(this.sql.searchById, { id });
   }

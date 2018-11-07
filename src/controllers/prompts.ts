@@ -57,7 +57,8 @@ export enum ComicsModes {
   BACK = '<-',
   LIST = 'List all comics',
   RANDOMIZE = 'Fill db with random data',
-  SEARCH = 'Search in comics',
+  SEARCH = 'FTS by inner word',
+  BACK_SEARCH = 'FTS by absence word',
   SELECT = 'Select one comics',
   ADVANCED_SEARCH = 'Custom search',
   DROP = 'Clean DB',
@@ -235,6 +236,7 @@ export const comicsPrompts = {
       choices: [
         ComicsModes.CREATE,
         ComicsModes.SEARCH,
+        ComicsModes.BACK_SEARCH,
         ComicsModes.LIST,
         ComicsModes.RANDOMIZE,
         ComicsModes.DROP,
