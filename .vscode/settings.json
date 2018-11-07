@@ -5,6 +5,7 @@
     ".idea": true,
     "yarn.lock": true,
     "yarn-error.log": true,
-    "LICENSE": true
+    "LICENSE": true,
+    "src/db/models/character": true
   }
 }

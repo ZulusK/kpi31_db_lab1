@@ -26,6 +26,11 @@ export async function start(selectedComicsId: string) {
       case SelectedComicsModes.VIEW_ALL_AUTHORS:
         await interactiveListAuthors(comics);
         break;
+      case SelectedComicsModes.DELETE:
+        if (await deleteSelected(comics)) {
+          return;
+        }
+        break;
       case SelectedComicsModes.BACK:
         return;
     }
@@ -53,4 +58,13 @@ function listAuthors(comics: IComics) {
 
 function interactiveListAuthors(comics: IComics) {
   return InteractiveTableView.display(listAuthors(comics), 0, 10);
+}
+
+async function deleteSelected(comics: IComics): Promise<boolean> {
+  const answers = (await inquirer.prompt(selectedComicsPrompts.delete)) as any;
+  if (answers.confirm) {
+    await db.comics.deleteById(comics.id as any);
+    return true;
+  }
+  return false;
 }

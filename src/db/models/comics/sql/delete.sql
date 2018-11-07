@@ -1,1 +1,1 @@
-DELETE FROM comics WHERE id = $1
+DELETE FROM comics WHERE id = ${id};

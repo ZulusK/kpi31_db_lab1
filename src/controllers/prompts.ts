@@ -36,16 +36,19 @@ export enum SelectedAuthorModes {
   UPDATE = 'update',
   ADD_COMICS = 'add comics',
   VIEW_ALL_COMICS = 'view comics of author',
+  DELETE = 'delete this author',
   BACK = '<-',
 }
 export enum SelectedSeriesModes {
   UPDATE = 'update',
   VIEW_ALL_COMICS = 'view comics in series',
+  DELETE = 'delete this series',
   BACK = '<-',
 }
 export enum SelectedComicsModes {
   UPDATE = 'update',
   VIEW_ALL_AUTHORS = 'view authors of comics',
+  DELETE = 'delete this comics',
   BACK = '<-',
 }
 export enum ComicsModes {
@@ -423,6 +426,7 @@ export const selectedComicsPrompts = {
       choices: [
         SelectedComicsModes.UPDATE,
         SelectedComicsModes.VIEW_ALL_AUTHORS,
+        SelectedComicsModes.DELETE,
         SelectedComicsModes.BACK,
       ],
       default: 0,
@@ -478,6 +482,13 @@ export const selectedComicsPrompts = {
       format: ['d', '/', 'm', '/', 'yyyy'],
       default: comics.publish_date,
       initial: comics.publish_date,
+    },
+  ],
+  delete: [
+    {
+      name: 'confirm',
+      type: 'confirm',
+      message: 'Are you sure?',
     },
   ],
 };

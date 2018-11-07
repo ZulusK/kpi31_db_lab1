@@ -23,7 +23,6 @@ export {
 export async function init(db: IProjectDatabase) {
   await db.series.create();
   await db.comics.create();
-  await db.characters.create();
   await db.authors.create();
   await db.comicsAuthors.create();
 }

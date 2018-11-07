@@ -1,5 +1,5 @@
 import { IMain, QueryFile } from 'pg-promise';
-import { IResult } from 'pg-promise/typescript/pg-subset';
+// import { IResult } from 'pg-promise/typescript/pg-subset';
 import { IProjectDatabase } from '../index';
 
 export interface IBaseRecord {
@@ -63,8 +63,8 @@ export class BaseModel<T extends IBaseRecord, S extends IBaseSqlQueryTree> {
   }
 
   // Tries to delete a entity by id, and returns the number of records deleted;
-  remove(id: number) {
-    return this.db.result(this.sql.delete, +id, (r: IResult) => r.rowCount);
+  deleteById(id: number) {
+    return this.db.result(this.sql.delete, { id });
   }
 
   // Tries to find a user from id;
