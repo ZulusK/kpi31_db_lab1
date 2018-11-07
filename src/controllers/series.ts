@@ -13,6 +13,7 @@ import {
   SeriesModes,
   randomizeEntitiesPromptItems,
 } from './prompts';
+import * as selectedSeriesCtrl from './selectedSeries';
 
 export async function start() {
   clear();
@@ -30,6 +31,9 @@ export async function start() {
         break;
       case SeriesModes.RANDOMIZE:
         await randomize();
+        break;
+      case SeriesModes.SELECT:
+        await select();
         break;
       case SeriesModes.DROP:
         await drop();
@@ -83,4 +87,9 @@ async function drop() {
   if (answers.confirm) {
     console.log(TableView.buildTable(await db.comics.empty()));
   }
+}
+
+async function select() {
+  const answers = (await inquirer.prompt(seriesPrompts.selectById)) as any;
+  await selectedSeriesCtrl.start(answers.seriesId);
 }

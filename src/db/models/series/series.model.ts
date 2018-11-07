@@ -15,4 +15,8 @@ export class SeriesModel extends BaseModel<ISeries, ISeriesSqlQueryTree> {
   searchById(id: string) {
     return this.db.manyOrNone(this.sql.searchById, { id });
   }
+
+  updateById(targetId: any, newData: ISeries) {
+    return this.db.oneOrNone(this.sql.updateById, { targetId, ...newData });
+  }
 }

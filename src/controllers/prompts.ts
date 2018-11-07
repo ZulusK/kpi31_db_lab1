@@ -25,16 +25,22 @@ export enum MenuModes {
   EXIT = 'Exit',
 }
 export enum SeriesModes {
-  CREATE = 'create new',
-  BACK = 'back',
-  LIST = 'list',
-  RANDOMIZE = 'fill db with random data',
-  DROP = 'clean DB',
+  CREATE = 'Create new',
+  BACK = '<-',
+  LIST = 'List',
+  RANDOMIZE = 'Fill db with random data',
+  SELECT = 'Select one series',
+  DROP = 'Clean DB',
 }
 export enum SelectedAuthorModes {
   UPDATE = 'update',
   ADD_COMICS = 'add comics',
   VIEW_ALL_COMICS = 'view comics of author',
+  BACK = '<-',
+}
+export enum SelectedSeriesModes {
+  UPDATE = 'update',
+  VIEW_ALL_COMICS = 'view comics in series',
   BACK = '<-',
 }
 export enum SelectedComicsModes {
@@ -138,6 +144,7 @@ export const seriesPrompts = {
         SeriesModes.LIST,
         SeriesModes.RANDOMIZE,
         SeriesModes.DROP,
+        SeriesModes.SELECT,
         SeriesModes.BACK,
       ],
       default: 0,
@@ -431,6 +438,37 @@ export const selectedComicsPrompts = {
       format: ['d', '/', 'm', '/', 'yyyy'],
       default: comics.publish_date,
       initial: comics.publish_date,
+    },
+  ],
+};
+export const selectedSeriesPrompts = {
+  menu: [
+    {
+      name: 'mode',
+      type: 'list',
+      message: "What's next?",
+      choices: [
+        SelectedSeriesModes.UPDATE,
+        SelectedSeriesModes.VIEW_ALL_COMICS,
+        SelectedSeriesModes.BACK,
+      ],
+      default: 0,
+    },
+  ],
+  getUpdatePrompt: (series: ISeries) => [
+    {
+      name: 'title',
+      type: 'input',
+      default: series.title,
+      message: 'Title:',
+    },
+    {
+      name: 'rating',
+      type: 'number',
+      max: 10,
+      min: 1,
+      default: series.rating,
+      message: 'Rating:',
     },
   ],
 };

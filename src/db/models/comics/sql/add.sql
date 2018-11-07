@@ -10,7 +10,7 @@ VALUES
 (
     ${title},
     ${publishDate},
-    ${serieId},
+    ${seriesId},
     ${category},
     ${rating}
 )

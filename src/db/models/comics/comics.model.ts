@@ -7,7 +7,7 @@ import { IProjectDatabase } from '../../index';
 export interface IComics extends IBaseRecord {
   title: string;
   publish_date?: Date;
-  serieId?: number;
+  serie_id?: number;
   category?: ComicsCategory;
   rating?: number;
 }
@@ -25,7 +25,17 @@ export class ComicsModel extends BaseModel<IComics, IComicsSqlQueryTree> {
   searchById(id: string) {
     return this.db.manyOrNone(this.sql.searchById, { id });
   }
-  updateById(targetId: any, newData: IComics) {
+  updateById(targetId: number, newData: IComics) {
     return this.db.oneOrNone(this.sql.updateById, { targetId, ...newData });
+  }
+  listBySeries(
+    seriesId: number,
+    { offset, limit }: { offset: number; limit: number },
+  ) {
+    return this.db.manyOrNone(this.sql.listBySeries, {
+      seriesId,
+      offset,
+      limit,
+    });
   }
 }
