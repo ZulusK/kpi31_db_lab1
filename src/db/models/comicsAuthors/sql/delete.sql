@@ -1,1 +1,1 @@
-DELETE FROM comics_authors WHERE author_id = ${authorId} AND comcis_id=${comicsId};
+DELETE FROM comics_authors WHERE author_id = ${authorId} AND comics_id=${comicsId};

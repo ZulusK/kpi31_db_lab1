@@ -5,6 +5,7 @@ import { QueryFile } from 'pg-promise';
 export interface IComicsAuthorsSqlQueryTree extends IBaseSqlQueryTree {
   listComicsByAuthor: QueryFile;
   listAuthorsByComics: QueryFile;
+  listComicsByIdAndAuthor: QueryFile;
 }
 const tree: IComicsAuthorsSqlQueryTree = sql.loadSqlFromDir(__dirname);
 export default tree;

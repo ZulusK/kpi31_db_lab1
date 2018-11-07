@@ -1,4 +1,4 @@
-import { ComicsAuthorsModel } from './conicsAuthors.model';
+import { ComicsAuthorsModel } from './comicsAuthors.model';
 import sql from './sql';
 
 export { ComicsAuthorsModel, sql };

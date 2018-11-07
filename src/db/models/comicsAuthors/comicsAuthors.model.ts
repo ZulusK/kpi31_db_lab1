@@ -28,4 +28,16 @@ export class ComicsAuthorsModel extends BaseModel<
       offset,
     });
   }
+  deleteByAuthorAndComics(comicsId: number, authorId: number) {
+    return this.db.oneOrNone(this.sql.delete, {
+      comicsId,
+      authorId,
+    });
+  }
+  listComicsByIdAndAuthor(comicsId: number, authorId: number) {
+    return this.db.manyOrNone(this.sql.listComicsByIdAndAuthor, {
+      comicsId,
+      authorId,
+    });
+  }
 }

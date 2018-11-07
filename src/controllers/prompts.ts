@@ -35,6 +35,7 @@ export enum SeriesModes {
 export enum SelectedAuthorModes {
   UPDATE = 'update',
   ADD_COMICS = 'add comics',
+  DELETE_COMICS = 'delete comics',
   VIEW_ALL_COMICS = 'view comics of author',
   DELETE = 'delete this author',
   BACK = '<-',
@@ -377,6 +378,7 @@ export const selectedAuthorPrompts = {
       choices: [
         SelectedAuthorModes.UPDATE,
         SelectedAuthorModes.ADD_COMICS,
+        SelectedAuthorModes.DELETE_COMICS,
         SelectedAuthorModes.VIEW_ALL_COMICS,
         SelectedAuthorModes.DELETE,
         SelectedAuthorModes.BACK,
@@ -421,6 +423,33 @@ export const selectedAuthorPrompts = {
       format: ['d', '/', 'm', '/', 'yyyy'],
       default: author.dob,
       initial: author.dob,
+    },
+  ],
+  getDeleteComicsByIdAndAuthor: (author: IAuthor) => [
+    {
+      filter: (input: string) => (input ? input.split('/')[0] : ''),
+      name: 'comicsId',
+      type: 'autocomplete',
+      source: async (__: any, input: string) => {
+        if (input && input.length > 0) {
+          const rows = await Promise.resolve(
+            db.comicsAuthors.listComicsByIdAndAuthor(
+              input as any,
+              author.id as any,
+            ),
+          );
+          return rows.map((row: any) => ({
+            value: `${row.id}/${row.title}`,
+          }));
+        }
+        return [];
+      },
+      message: 'Id of comics:',
+    },
+    {
+      name: 'confirm',
+      type: 'confirm',
+      message: 'Are you sure?',
     },
   ],
 };

@@ -30,6 +30,9 @@ export async function start(selectedAuthorId: string) {
       case SelectedAuthorModes.ADD_COMICS:
         await addComics(author);
         break;
+      case SelectedAuthorModes.DELETE_COMICS:
+        await deleteComics(author);
+        break;
       case SelectedAuthorModes.VIEW_ALL_COMICS:
         await interactiveListComics(author);
         break;
@@ -82,6 +85,23 @@ async function deleteSelected(author: IAuthor): Promise<boolean> {
   const answers = (await inquirer.prompt(selectedAuthorPrompts.delete)) as any;
   if (answers.confirm) {
     await db.authors.deleteById(author.id as any);
+    return true;
+  }
+  return false;
+}
+async function deleteComics(author: IAuthor) {
+  const answers = (await inquirer.prompt(
+    selectedAuthorPrompts.getDeleteComicsByIdAndAuthor(author),
+  )) as any;
+  if (answers.confirm) {
+    try {
+      await db.comicsAuthors.deleteByAuthorAndComics(
+        answers.comicsId as any,
+        author.id as any,
+      );
+    } catch (err) {
+      return false;
+    }
     return true;
   }
   return false;
