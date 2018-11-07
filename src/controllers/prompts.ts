@@ -67,6 +67,21 @@ export enum CharactersModes {
 /**
  * PROMPTS
  */
+export const menuPrompts = {
+  menu: {
+    name: 'mode',
+    type: 'list',
+    message: "What's next?",
+    choices: [
+      MenuModes.OPERATIONS_WITH_COMICS,
+      MenuModes.OPERATIONS_WITH_SERIES,
+      // MenuModes.OPERATIONS_WITH_CHARACTERS,
+      MenuModes.OPERATIONS_WITH_AUTHORS,
+      MenuModes.EXIT,
+    ],
+    default: 0,
+  },
+};
 export const authorsPrompts = {
   menu: [
     {
@@ -162,6 +177,13 @@ export const seriesPrompts = {
       max: 10,
       min: 1,
       message: 'Rating:',
+    },
+    {
+      filter: (input: string) => input === 'yes',
+      name: 'isEnded',
+      type: 'list',
+      message: 'Is series ended:',
+      choices: ['yes', 'no'],
     },
   ],
   selectById: [
@@ -429,6 +451,7 @@ export const selectedComicsPrompts = {
         }
         return [prompts.emptyPromptAutocomplete];
       },
+      default: comics.serie_id,
       message: 'Id of series:',
     },
     {
@@ -469,6 +492,14 @@ export const selectedSeriesPrompts = {
       min: 1,
       default: series.rating,
       message: 'Rating:',
+    },
+    {
+      filter: (input: string) => input === 'yes',
+      name: 'isEnded',
+      type: 'list',
+      default: series.is_ended,
+      message: 'Is series ended:',
+      choices: ['yes', 'no'],
     },
   ],
 };

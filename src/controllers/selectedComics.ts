@@ -20,7 +20,7 @@ export async function start(selectedComicsId: string) {
     switch (answers.mode) {
       case SelectedComicsModes.UPDATE:
         await update(comics);
-        comics = await db.authors.findById(selectedComicsId);
+        comics = await db.comics.findById(selectedComicsId);
         break;
       case SelectedComicsModes.VIEW_ALL_AUTHORS:
         await interactiveListAuthors(comics);
@@ -34,7 +34,7 @@ async function update(comics: IComics) {
   const answers: any = await inquirer.prompt(
     selectedComicsPrompts.getUpdatePrompt(comics),
   );
-  await db.comics.updateById(comics.id, answers);
+  await db.comics.updateById(comics.id as any, answers);
 }
 
 function listAuthors(comics: IComics) {

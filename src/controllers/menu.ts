@@ -7,23 +7,7 @@ import * as charactersCtrl from './characters';
 const clear = require('clear');
 import * as figlet from 'figlet';
 import chalk from 'chalk';
-import { MenuModes } from './prompts';
-
-const menuItems = [
-  {
-    name: 'mode',
-    type: 'list',
-    message: "What's next?",
-    choices: [
-      MenuModes.OPERATIONS_WITH_COMICS,
-      MenuModes.OPERATIONS_WITH_SERIES,
-      MenuModes.OPERATIONS_WITH_CHARACTERS,
-      MenuModes.OPERATIONS_WITH_AUTHORS,
-      MenuModes.EXIT,
-    ],
-    default: 0,
-  },
-];
+import { MenuModes, menuPrompts } from './prompts';
 
 export async function start() {
   while (true) {
@@ -33,7 +17,7 @@ export async function start() {
         figlet.textSync('Hello, guys', { font: 'Big Money-nw' }),
       ),
     );
-    const answers: any = await inquirer.prompt(menuItems);
+    const answers: any = await inquirer.prompt(menuPrompts.menu);
     switch (answers.mode) {
       case MenuModes.OPERATIONS_WITH_COMICS:
         await comicsCtrl.start();

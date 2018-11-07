@@ -1,11 +1,13 @@
 INSERT INTO series
 (
     "title",
-    "rating"
+    "rating",
+    "is_ended"
 )
 VALUES
 (
     ${title},
-    ${rating}
+    ${rating},
+    ${idEnded}
 )
 RETURNING *

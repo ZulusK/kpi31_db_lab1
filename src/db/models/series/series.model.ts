@@ -6,6 +6,8 @@ import { IProjectDatabase } from '../../index';
 export interface ISeries extends IBaseRecord {
   title: string;
   rating: number;
+  isEnded: boolean;
+  is_ended?: boolean;
 }
 export class SeriesModel extends BaseModel<ISeries, ISeriesSqlQueryTree> {
   constructor(db: IProjectDatabase, pgp: IMain) {
