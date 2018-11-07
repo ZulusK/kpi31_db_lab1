@@ -57,7 +57,7 @@ export enum ComicsModes {
   BACK = '<-',
   LIST = 'List all comics',
   RANDOMIZE = 'Fill db with random data',
-  SEARCH = 'FTS by inner word',
+  SEARCH = 'FTS by phrase',
   BACK_SEARCH = 'FTS by absence word',
   SELECT = 'Select one comics',
   ADVANCED_SEARCH = 'Custom search',
