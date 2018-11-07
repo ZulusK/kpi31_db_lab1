@@ -1,0 +1,113 @@
+{
+  "name": "kpi31_db_lab1",
+  "version": "1.0.0",
+  "description": "Lab#1 KPI, FAM 2018",
+  "main": "index.js",
+  "repository": "https://github.com/ZulusK/kpi31_db_lab1.git",
+  "author": "Danil Kazimirov <danil.kazim.99@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "yarn build && yarn copy-assets && yarn start-js",
+    "start-js": "NODE_ENV=production node ./dist/index.js",
+    "dev": "NODE_ENV=development nodemon --exec ts-node src/index.ts",
+    "build": "yarn clear && tsc",
+    "clear": "rm -rf ./dist",
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "copy-assets": "yarn copyfiles src/**/*.sql dist -u 1",
+    "test": "NODE_ENV=test jest --detectOpenHandles --forceExit"
+  },
+  "devDependencies": {
+    "@types/chalk": "^2.2.0",
+    "@types/cli-table": "^0.3.0",
+    "@types/country-list": "^1.1.0",
+    "@types/debug": "^0.0.31",
+    "@types/delay": "^3.1.0",
+    "@types/dotenv": "^4.0.3",
+    "@types/faker": "^4.1.4",
+    "@types/figlet": "^1.2.0",
+    "@types/inquirer": "^0.0.43",
+    "@types/jest": "^23.3.5",
+    "@types/joi": "^13.6.0",
+    "@types/lodash": "^4.14.117",
+    "@types/moment": "^2.13.0",
+    "@types/pg": "^7.4.10",
+    "@types/pg-promise": "^5.4.3",
+    "@types/table": "^4.0.5",
+    "copyfiles": "^2.1.0",
+    "cz-conventional-changelog": "^2.1.0",
+    "delay": "^4.1.0",
+    "husky": "^1.1.1",
+    "jest": "^23.6.0",
+    "nodemon": "^1.13.0",
+    "prettier": "^1.14.3",
+    "prettier-tslint": "^0.4.0",
+    "shelljs": "^0.8.1",
+    "ts-jest": "^23.10.4",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.11.0",
+    "tslint-config-airbnb": "^5.11.0",
+    "tslint-config-prettier": "^1.15.0",
+    "typescript": "^3.1.1"
+  },
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "clear": "^0.1.0",
+    "clui": "^0.3.6",
+    "table": "^5.1.0",
+    "country-list": "^1.1.0",
+    "debug": "^4.1.0",
+    "dotenv": "^6.0.0",
+    "faker": "^4.1.0",
+    "figlet": "^1.2.1",
+    "inquirer": "^6.2.0",
+    "inquirer-autocomplete-prompt": "^1.0.1",
+    "inquirer-datepicker-prompt": "^0.4.2",
+    "inquirer-number-plus": "^1.0.0",
+    "joi": "^14.0.0",
+    "keypress": "^0.2.1",
+    "lodash": "^4.17.11",
+    "moment": "^2.22.2",
+    "nodemailer": "^4.4.1",
+    "pg": "^7.5.0",
+    "pg-monitor": "^1.0.0",
+    "pg-promise": "^8.4.6",
+    "winston": "^3.1.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "yarn lint && yarn build"
+    }
+  },
+  "jest": {
+    "collectCoverage": false,
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx,js,jsx}",
+      "!src/**/*.d.ts"
+    ],
+    "coverageDirectory": "coverage",
+    "globalSetup": "./src/test/setup.js",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ],
+    "testEnvironment": "node",
+    "preset": "ts-jest",
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testPathIgnorePatterns": [
+      "/lib/",
+      "/node_modules/",
+      "/dist/"
+    ]
+  }
+}

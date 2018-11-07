@@ -1,0 +1,1 @@
+TRUNCATE TABLE comics_authors CASCADE

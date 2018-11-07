@@ -1,0 +1,11 @@
+{
+  "files.exclude": {
+    "__error": "Not found",
+    "node_modules": true,
+    ".idea": true,
+    "yarn.lock": true,
+    "yarn-error.log": true,
+    "LICENSE": true,
+    "src/db/models/character": true
+  }
+}

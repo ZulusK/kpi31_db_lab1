@@ -1,0 +1,58 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Jest Tests",
+      "type": "node",
+      "request": "launch",
+      "port": 9229,
+      "runtimeArgs": [
+        "--inspect-brk",
+        "${workspaceRoot}/node_modules/.bin/jest",
+        "--runInBand",
+        "--coverage",
+        "false",
+        "--forceExit",
+        "--detectOpenHandles"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "name": "Debug current file Jest Tests",
+      "type": "node",
+      "request": "launch",
+      "port": 9229,
+      "runtimeArgs": [
+        "--inspect-brk",
+        "${workspaceRoot}/node_modules/.bin/jest",
+        "--runInBand",
+        "--coverage",
+        "false",
+        "--forceExit",
+        "--detectOpenHandles",
+        "${relativeFile}"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "name": "Debug",
+      "type": "node",
+      "request": "launch",
+      "port": 9229,
+      "runtimeArgs": [
+        "--inspect-brk",
+        "--nolazy",
+        "-r",
+        "ts-node/register",
+        "src/index.ts"
+      ],
+      "sourceMaps": true,
+      "cwd": "${workspaceRoot}",
+      "protocol": "inspector",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    }
+  ]
+}

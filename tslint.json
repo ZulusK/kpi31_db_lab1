@@ -1,0 +1,22 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:latest",
+    "tslint-config-prettier",
+    "tslint-config-airbnb"
+  ],
+  "jsRules": {},
+  "rules": {
+    "no-console": false,
+    "member-access": false,
+    "no-parameter-reassignment": false,
+    "no-var-requires": false,
+    "object-literal-sort-keys": false,
+    "ordered-imports": false,
+    "interface-name": false,
+    "no-submodule-imports": false,
+    "jsx-no-lambda": false,
+    "quotemark": [true, "single", "avoid-escape", "avoid-template"]
+  },
+  "rulesDirectory": []
+}
