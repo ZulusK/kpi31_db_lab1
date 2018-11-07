@@ -20,6 +20,7 @@ export async function start(selectedAuthorId: string) {
   console.log(chalk.cyan(figlet.textSync('Author', { font: 'Isometric3' })));
   let author = await db.authors.findById(selectedAuthorId);
   while (true) {
+    console.log(TableView.buildTable([author]));
     const answers: any = await inquirer.prompt(selectedAuthorPrompts.menu);
     switch (answers.mode) {
       case SelectedAuthorModes.UPDATE:

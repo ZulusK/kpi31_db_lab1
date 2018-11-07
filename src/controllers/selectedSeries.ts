@@ -16,6 +16,7 @@ export async function start(selectedSeriesId: string) {
   console.log(chalk.cyan(figlet.textSync('Series', { font: 'Isometric3' })));
   let series = await db.series.findById(selectedSeriesId);
   while (true) {
+    console.log(TableView.buildTable([series]));
     const answers: any = await inquirer.prompt(selectedSeriesPrompts.menu);
     switch (answers.mode) {
       case SelectedSeriesModes.UPDATE:

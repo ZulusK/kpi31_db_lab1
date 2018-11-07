@@ -38,4 +38,21 @@ export class ComicsModel extends BaseModel<IComics, IComicsSqlQueryTree> {
       limit,
     });
   }
+  listComicsByCategoryInEndedSeries(
+    {
+      category,
+      isEnded,
+    }: {
+      category: ComicsCategory;
+      isEnded: boolean;
+    },
+    { offset, limit }: { offset: number; limit: number },
+  ) {
+    return this.db.manyOrNone(this.sql.listComicsByCategoryInEndedSeries, {
+      category,
+      isEnded,
+      offset,
+      limit,
+    });
+  }
 }

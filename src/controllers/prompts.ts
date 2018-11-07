@@ -55,6 +55,7 @@ export enum ComicsModes {
   RANDOMIZE = 'Fill db with random data',
   SEARCH = 'Search in comics',
   SELECT = 'Select one comics',
+  ADVANCED_SEARCH = 'Custom search',
   DROP = 'Clean DB',
 }
 export enum CharactersModes {
@@ -234,6 +235,7 @@ export const comicsPrompts = {
         ComicsModes.RANDOMIZE,
         ComicsModes.DROP,
         ComicsModes.SELECT,
+        ComicsModes.ADVANCED_SEARCH,
         ComicsModes.BACK,
       ],
       default: 0,
@@ -284,6 +286,21 @@ export const comicsPrompts = {
       message: 'Publish date:',
       format: ['d', '/', 'm', '/', 'yyyy'],
       initial: new Date('1950-01-01'),
+    },
+  ],
+  advancedSearch: [
+    {
+      name: 'category',
+      type: 'list',
+      message: 'Category:',
+      choices: comicsCategories,
+    },
+    {
+      filter: (input: string) => input === 'yes',
+      name: 'isEnded',
+      type: 'list',
+      message: 'Is series ended:',
+      choices: ['yes', 'no'],
     },
   ],
   search: [

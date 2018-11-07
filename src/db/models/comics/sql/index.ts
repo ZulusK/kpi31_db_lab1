@@ -7,6 +7,7 @@ export interface IComicsSqlQueryTree extends IBaseSqlQueryTree {
   searchById: QueryFile;
   updateById: QueryFile;
   listBySeries: QueryFile;
+  listComicsByCategoryInEndedSeries: QueryFile;
 }
 const tree: IComicsSqlQueryTree = sql.loadSqlFromDir(__dirname);
 export default tree;

@@ -41,6 +41,9 @@ export async function start() {
       case ComicsModes.SELECT:
         await select();
         break;
+      case ComicsModes.ADVANCED_SEARCH:
+        await interactiveAdvancedSearch();
+        break;
       case ComicsModes.BACK:
         return;
     }
@@ -104,4 +107,35 @@ async function search() {
 async function select() {
   const answers = (await inquirer.prompt(comicsPrompts.selectById)) as any;
   await selectedComicsCtrl.start(answers.comicsId);
+}
+
+function advancedSearch(args: any) {
+  return async ({ offset, limit }: IListFunctionArgs) => {
+    const list = await db.comics.listComicsByCategoryInEndedSeries(
+      {
+        category: args.category,
+        isEnded: args.isEnded,
+      },
+      {
+        offset,
+        limit,
+      },
+    );
+    const total = await db.comics.total();
+    clear();
+    console.log(TableView.buildTable(list));
+    console.log(
+      chalk.cyan('total:'),
+      total,
+      chalk.red('limit:'),
+      limit,
+      chalk.magenta('offset:'),
+      offset,
+    );
+  };
+}
+
+async function interactiveAdvancedSearch() {
+  const answers = await inquirer.prompt(comicsPrompts.advancedSearch);
+  return InteractiveTableView.display(advancedSearch(answers as any), 0, 10);
 }
