@@ -7,6 +7,7 @@ import InteractiveTableView, {
   IListFunctionArgs,
 } from '../views/InteractiveTableView';
 import TableView from '../views/TableView';
+import * as selectedComicsCtrl from './selectedComics';
 import { comics } from '../utils';
 import {
   comicsPrompts,
@@ -36,6 +37,9 @@ export async function start() {
         break;
       case ComicsModes.DROP:
         await empty();
+        break;
+      case ComicsModes.SELECT:
+        await select();
         break;
       case ComicsModes.BACK:
         return;
@@ -95,4 +99,9 @@ async function search() {
       maxLength: 0,
     }),
   );
+}
+
+async function select() {
+  const answers = (await inquirer.prompt(comicsPrompts.selectById)) as any;
+  await selectedComicsCtrl.start(answers.comicsId);
 }

@@ -21,4 +21,11 @@ export class ComicsAuthorsModel extends BaseModel<
       offset,
     });
   }
+  listAuthorsOfComics(comicsId: number, { limit = 20, offset = 0 }) {
+    return this.db.manyOrNone(this.sql.listAuthorsByComics, {
+      comicsId,
+      limit,
+      offset,
+    });
+  }
 }

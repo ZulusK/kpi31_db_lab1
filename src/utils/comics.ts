@@ -1,11 +1,11 @@
 import * as faker from 'faker';
 import { comicsCategories } from '../db/types';
-import { IComics } from '../db/models/comics/comics.model';
+import * as moment from 'moment';
 
-export function randomData(): IComics {
+export function randomData(): any {
   return {
     title: faker.lorem.words(1 + Math.random() * 6),
-    publish_date: faker.date.past(),
+    publishDate: moment(faker.date.past()).format('MM-DD-YYYY') as any,
     category: faker.random.arrayElement(comicsCategories) as any,
     rating: faker.random.number({ min: 0, max: 10 }),
   };

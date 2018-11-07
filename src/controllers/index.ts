@@ -1,5 +1,5 @@
 const clear = require('clear');
-import * as menu from './menu';
+import * as menuCtrl from './menu';
 import * as inquirer from 'inquirer';
 
 inquirer.registerPrompt(
@@ -15,5 +15,5 @@ inquirer.registerPrompt(
 
 export async function start() {
   clear();
-  await menu.start();
+  await menuCtrl.start();
 }

@@ -9,7 +9,7 @@ import InteractiveTableView, {
 import TableView from '../views/TableView';
 import { authors } from '../utils';
 import * as _ from 'lodash';
-import * as authorsRow from './selectedAuthor';
+import * as selectedAuthorCtrl from './selectedAuthor';
 import {
   authorsPrompts,
   AuthorsModes,
@@ -83,10 +83,6 @@ async function drop() {
 }
 
 async function select() {
-  let row: string = '';
-  while (!row) {
-    const answers = (await inquirer.prompt(authorsPrompts.selectById)) as any;
-    row = answers.row;
-  }
-  await authorsRow.start(row.split('/')[0]);
+  const answers = (await inquirer.prompt(authorsPrompts.selectById)) as any;
+  await selectedAuthorCtrl.start(answers.authorId);
 }

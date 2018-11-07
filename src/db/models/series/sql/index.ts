@@ -1,5 +1,9 @@
 import { sql } from '../../../../utils/index';
 import { IBaseSqlQueryTree } from '../../BaseModel';
+import { QueryFile } from 'pg-promise';
 
-const tree: IBaseSqlQueryTree = sql.loadSqlFromDir(__dirname);
+export interface ISeriesSqlQueryTree extends IBaseSqlQueryTree {
+  searchById: QueryFile;
+}
+const tree: ISeriesSqlQueryTree = sql.loadSqlFromDir(__dirname);
 export default tree;

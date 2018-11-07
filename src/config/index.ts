@@ -6,3 +6,4 @@ dotenv.config({
 export { default as db } from './db';
 export { default as log } from './log';
 export { default as env } from './env';
+export { default as prompts } from './prompts';

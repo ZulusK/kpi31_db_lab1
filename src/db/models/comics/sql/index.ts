@@ -5,6 +5,7 @@ import { QueryFile } from 'pg-promise';
 export interface IComicsSqlQueryTree extends IBaseSqlQueryTree {
   fullTextSearch: QueryFile;
   searchById: QueryFile;
+  updateById: QueryFile;
 }
 const tree: IComicsSqlQueryTree = sql.loadSqlFromDir(__dirname);
 export default tree;
