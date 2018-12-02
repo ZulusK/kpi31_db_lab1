@@ -1,8 +1,8 @@
-import { IMain } from 'pg-promise';
-import { default as sql, IComicsSqlQueryTree } from './sql';
-import { ComicsCategory } from '../../types';
-import { BaseModel, IBaseRecord } from '../BaseModel';
-import { IProjectDatabase } from '../../index';
+import {IMain} from 'pg-promise';
+import {default as sql, IComicsSqlQueryTree} from './sql';
+import {ComicsCategory} from '../../types';
+import {BaseModel, IBaseRecord} from '../BaseModel';
+import {IProjectDatabase} from '../../index';
 
 export interface IComics extends IBaseRecord {
   title: string;
@@ -23,7 +23,12 @@ export class ComicsModel extends BaseModel<IComics, IComicsSqlQueryTree> {
     return this.db.manyOrNone(this.sql.fullTextSearch, [query]);
   }
   backFts(query: string) {
-    return this.db.manyOrNone(this.sql.backFullTextSearch, [query]);
+      return this.db.manyOrNone(this.sql.backFullTextSearch, [
+          query
+              .split(/\s/)
+              .filter(s => s.length > 0)
+              .join(' | '),
+      ]);
   }
   searchById(id: string) {
     return this.db.manyOrNone(this.sql.searchById, { id });
