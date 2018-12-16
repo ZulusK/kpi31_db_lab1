@@ -1,6 +1,5 @@
 import * as faker from 'faker';
 import { genders } from '../db/types';
-import { ICharacter } from '../db/models/character/characters.model';
 
 const superPrefix = [
   'Super',
@@ -13,7 +12,7 @@ const superPrefix = [
   'Fast',
   'Dr.',
   'Magic',
-  'Dark',
+  'Dark'
 ];
 const skills = [
   'speed',
@@ -29,22 +28,18 @@ const skills = [
   'impenetrable',
   'timetravel',
   'humor',
-  'acrobat',
+  'acrobat'
 ];
-export function randomData(): ICharacter {
+
+export function randomData(): any {
   return {
-    nickname: `${faker.random.arrayElement(
-      superPrefix,
-    )} ${faker.internet.userName()}`,
-    name: `${faker.name.findName()}`,
-    skills: Array.from(
-      {
-        length: faker.random.number({ min: 1, max: 10 }),
-      },
-      () => faker.random.arrayElement(skills),
+    nickname: `${ faker.random.arrayElement(superPrefix) } ${ faker.internet.userName() }`,
+    name: `${ faker.name.findName() }`,
+    skills: Array.from({ length: faker.random.number({ min: 1, max: 10 }) },
+        () => faker.random.arrayElement(skills)
     ).join(', '),
     dob: faker.date.past(),
-    is_hero: faker.random.boolean(),
-    gender: faker.random.arrayElement(genders) as any,
+    isHero: faker.random.boolean(),
+    gender: faker.random.arrayElement(genders) as any
   };
 }

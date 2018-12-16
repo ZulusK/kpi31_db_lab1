@@ -1,20 +1,18 @@
 const clear = require('clear');
 import * as inquirer from 'inquirer';
-import { db } from '../db';
 import chalk from 'chalk';
 import * as figlet from 'figlet';
-import InteractiveTableView, {
-  IListFunctionArgs,
-} from '../views/InteractiveTableView';
+import InteractiveTableView, { IListFunctionArgs } from '../views/InteractiveTableView';
 import TableView from '../views/TableView';
 import { authors } from '../utils';
-import * as _ from 'lodash';
 import * as selectedAuthorCtrl from './selectedAuthor';
+import { Author } from '../db';
 import {
   authorsPrompts,
   AuthorsModes,
-  randomizeEntitiesPromptItems,
+  randomizeEntitiesPromptItems
 } from './prompts';
+
 export async function start() {
   clear();
   console.log(chalk.cyan(figlet.textSync('Authors', { font: 'Isometric3' })));
@@ -44,21 +42,22 @@ export async function start() {
 
 async function create() {
   const answers: any = await inquirer.prompt(authorsPrompts.create);
-  console.log(TableView.buildTable([await db.authors.insertOne(answers)]));
+  const author = await Author.query().insertAndFetch(answers);
+  console.log(TableView.buildTable([author]));
 }
 
 async function listAuthors({ offset, limit }: IListFunctionArgs) {
-  const list = await db.authors.list({ offset, limit });
-  const total = await db.authors.total();
+  const list = await Author.query().limit(limit).offset(offset);
+  const total = await Author.query().count();
   clear();
   console.log(TableView.buildTable(list));
   console.log(
-    chalk.cyan('total:'),
-    total,
-    chalk.red('limit:'),
-    limit,
-    chalk.magenta('offset:'),
-    offset,
+      chalk.cyan('total:'),
+      total,
+      chalk.red('limit:'),
+      limit,
+      chalk.magenta('offset:'),
+      offset
   );
 }
 
@@ -69,20 +68,20 @@ function interactiveList() {
 async function randomize() {
   const answers: any = await inquirer.prompt(randomizeEntitiesPromptItems);
   const randomData = Array.from({ length: answers.count }, authors.randomData);
-  console.log(TableView.buildTable(await db.authors.insertMany(randomData)));
+  console.log(TableView.buildTable(await Author.query().insertAndFetch(randomData)));
 }
 
 async function drop() {
   const answers: any = await inquirer.prompt({
     name: 'confirm',
-    type: 'confirm',
+    type: 'confirm'
   });
   if (answers.confirm) {
-    console.log(TableView.buildTable(await db.comics.empty()));
+    console.log(TableView.buildTable(await Author.query().delete()));
   }
 }
 
 async function select() {
-  const answers = (await inquirer.prompt(authorsPrompts.selectById)) as any;
+  const answers = await inquirer.prompt(authorsPrompts.selectById) as any;
   await selectedAuthorCtrl.start(answers.authorId);
 }
