@@ -2,7 +2,6 @@ import * as config from '../config/index';
 import { knexSnakeCaseMappers, Model } from 'objection';
 import * as knex from 'knex';
 
-
 const knexConnection = knex({
   client: 'pg',
   connection: {

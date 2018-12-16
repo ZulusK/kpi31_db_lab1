@@ -19,6 +19,7 @@
     "no-submodule-imports": false,
     "jsx-no-lambda": false,
     "align": false,
+    "ter-indent": false,
     "quotemark": [
       true,
       "single",

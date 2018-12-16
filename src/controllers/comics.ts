@@ -1,3 +1,5 @@
+import { raw } from 'objection';
+
 const clear = require('clear');
 import * as inquirer from 'inquirer';
 import chalk from 'chalk';
@@ -21,12 +23,12 @@ export async function start() {
   while (true) {
     const answers: any = await inquirer.prompt(comicsPrompts.menu);
     switch (answers.mode) {
-        // case ComicsModes.SEARCH:
-        //   await search();
-        //   break;
-        // case ComicsModes.BACK_SEARCH:
-        //   await backSearch();
-        //   break;
+      case ComicsModes.SEARCH:
+        await search();
+        break;
+      case ComicsModes.BACK_SEARCH:
+        await backSearch();
+        break;
       case ComicsModes.LIST:
         await interactiveList();
         break;
@@ -96,15 +98,20 @@ async function empty() {
   }
 }
 
-//
-// async function search() {
-//   const answers: any = await inquirer.prompt(comicsPrompts.search);
-//   console.log(
-//       TableView.buildTable(await db.comics.fts(answers.query), {
-//         maxLength: 0
-//       })
-//   );
-// }
+async function search() {
+  const answers: any = await inquirer.prompt(comicsPrompts.search);
+  console.log(
+      TableView.buildTable(
+          await Comics
+              .query()
+              // tslint:disable-next-line:max-line-length
+              .select(raw('id, ts_headline(title, q) as title, ts_headline(category::text, q) as category'))
+              .from(raw('comics, plainto_tsquery (?) AS q', [answers.query]))
+              .where(raw('make_tsvector(title, category) @@ plainto_tsquery(?)', [answers.query]))
+              .orderBy(raw('ts_rank(make_tsvector(title, category), q)'), 'DESC'),
+          { maxLength: 0 })
+  );
+}
 
 async function select() {
   const answers = await inquirer.prompt(comicsPrompts.selectById) as any;
@@ -138,11 +145,16 @@ async function interactiveAdvancedSearch() {
   return InteractiveTableView.display(advancedSearch(answers as any), 0, 10);
 }
 
-// async function backSearch() {
-//   const answers: any = await inquirer.prompt(comicsPrompts.search);
-//   console.log(
-//       TableView.buildTable(await Comics.query().comics.backFts(answers.query), {
-//         maxLength: 0
-//       })
-//   );
-// }
+async function backSearch() {
+  const answers: any = await inquirer.prompt(comicsPrompts.search);
+  console.log(
+      TableView.buildTable(
+          await Comics
+              .query()
+              .select(raw('id, ts_headline(title, q) as title, ts_headline(category::text, q) as category')) // tslint:disable-line:max-line-length
+              .from(raw('comics, plainto_tsquery(?) AS q', [answers.query]))
+              .where(raw('NOT make_tsvector(title, category) @@ plainto_tsquery(?)', [answers.query])) // tslint:disable-line:max-line-length
+              .orderBy(raw('ts_rank(make_tsvector(title, category), q)'), 'DESC'),
+          { maxLength: 0 })
+  );
+}

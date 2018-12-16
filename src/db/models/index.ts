@@ -10,4 +10,4 @@ export {
   Series,
   ComicsAuthor,
   Character
-}
+};
