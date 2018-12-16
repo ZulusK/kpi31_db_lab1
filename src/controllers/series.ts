@@ -1,24 +1,22 @@
 const clear = require('clear');
 import * as inquirer from 'inquirer';
-import { db } from '../db';
 import chalk from 'chalk';
 import * as figlet from 'figlet';
-import InteractiveTableView, {
-  IListFunctionArgs,
-} from '../views/InteractiveTableView';
+import InteractiveTableView, { IListFunctionArgs } from '../views/InteractiveTableView';
 import TableView from '../views/TableView';
 import { series } from '../utils';
 import {
   seriesPrompts,
   SeriesModes,
-  randomizeEntitiesPromptItems,
+  randomizeEntitiesPromptItems
 } from './prompts';
+import { Series } from '../db';
 import * as selectedSeriesCtrl from './selectedSeries';
 
 export async function start() {
   clear();
   console.log(
-    chalk.blueBright(figlet.textSync('Series', { font: 'Isometric3' })),
+      chalk.blueBright(figlet.textSync('Series', { font: 'Isometric3' }))
   );
   while (true) {
     const answers: any = await inquirer.prompt(seriesPrompts.menu);
@@ -46,21 +44,22 @@ export async function start() {
 
 async function createSeries() {
   const answers: any = await inquirer.prompt(seriesPrompts.create);
-  console.log(TableView.buildTable([await db.series.insertOne(answers)]));
+  const createdSeries = await Series.query().insertAndFetch(answers);
+  console.log(TableView.buildTable([createdSeries]));
 }
 
 async function listSeries({ offset, limit }: IListFunctionArgs) {
-  const list = await db.series.list({ offset, limit });
-  const total = await db.series.total();
+  const list = await Series.query().offset(offset).limit(limit);
+  const total = await Series.query().count();
   clear();
   console.log(TableView.buildTable(list));
   console.log(
-    chalk.cyan('total:'),
-    total,
-    chalk.red('limit:'),
-    limit,
-    chalk.magenta('offset:'),
-    offset,
+      chalk.cyan('total:'),
+      total,
+      chalk.red('limit:'),
+      limit,
+      chalk.magenta('offset:'),
+      offset
   );
 }
 
@@ -71,25 +70,24 @@ function interactiveList() {
 async function randomize() {
   const answers: any = await inquirer.prompt(randomizeEntitiesPromptItems);
   const seriesRandomData = Array.from(
-    { length: answers.count },
-    series.randomData,
+      { length: answers.count },
+      series.randomData
   );
-  console.log(
-    TableView.buildTable(await db.series.insertMany(seriesRandomData)),
-  );
+  const createdSeries = await Series.query().insertAndFetch(seriesRandomData);
+  console.log(TableView.buildTable(createdSeries));
 }
 
 async function drop() {
   const answers: any = await inquirer.prompt({
     name: 'confirm',
-    type: 'confirm',
+    type: 'confirm'
   });
   if (answers.confirm) {
-    console.log(TableView.buildTable(await db.comics.empty()));
+    console.log(TableView.buildTable(await Series.query().del()));
   }
 }
 
 async function select() {
-  const answers = (await inquirer.prompt(seriesPrompts.selectById)) as any;
-  await selectedSeriesCtrl.start(answers.seriesId);
+  const answers = await inquirer.prompt(seriesPrompts.selectById) as any;
+  await selectedSeriesCtrl.start(answers.serieId);
 }

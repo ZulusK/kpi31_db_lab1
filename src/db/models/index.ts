@@ -1,28 +1,13 @@
-import { ComicsModel } from './comics/index';
-import { SeriesModel } from './series';
-import { IProjectDatabase } from '..';
-import { CharactersModel } from './character';
-import { AuthorsModel } from './authors';
-import { ComicsAuthorsModel } from './comicsAuthors';
+import Comics from './Comics';
+import Author from './Author';
+import Character from './Character';
+import Series from './Series';
+import ComicsAuthor from './ComicsAuthor';
 
-// Database Interface Extensions:
-export interface IDbRepos {
-  comics: ComicsModel;
-  series: SeriesModel;
-  characters: CharactersModel;
-  authors: AuthorsModel;
-  comicsAuthors: ComicsAuthorsModel;
-}
 export {
-  ComicsModel,
-  SeriesModel,
-  CharactersModel,
-  AuthorsModel,
-  ComicsAuthorsModel,
+  Comics,
+  Author,
+  Series,
+  ComicsAuthor,
+  Character
 };
-export async function init(db: IProjectDatabase) {
-  await db.series.create();
-  await db.comics.create();
-  await db.authors.create();
-  await db.comicsAuthors.create();
-}

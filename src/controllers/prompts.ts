@@ -1,10 +1,8 @@
 import { genders, comicsCategories } from '../db/types';
 import { filterCountries } from '../utils/countries';
-import { db } from '../db';
-import { IAuthor } from '../db/models/authors/authors.model';
-import { IComics } from '../db/models/comics/comics.model';
-import { ISeries } from '../db/models/series/series.model';
+import { Comics, Author, Series } from '../db/models';
 import { prompts } from '../config';
+import { ref } from 'objection';
 
 /**
  * MODES
@@ -17,6 +15,7 @@ export enum AuthorsModes {
   SELECT = 'Select one author',
   DROP = 'Clean DB',
 }
+
 export enum MenuModes {
   OPERATIONS_WITH_COMICS = 'Work with comics',
   OPERATIONS_WITH_SERIES = 'Work with series',
@@ -24,6 +23,7 @@ export enum MenuModes {
   OPERATIONS_WITH_AUTHORS = 'Work with authors',
   EXIT = 'Exit',
 }
+
 export enum SeriesModes {
   CREATE = 'Create new',
   BACK = '<-',
@@ -32,6 +32,7 @@ export enum SeriesModes {
   SELECT = 'Select one series',
   DROP = 'Clean DB',
 }
+
 export enum SelectedAuthorModes {
   UPDATE = 'update',
   ADD_COMICS = 'add comics',
@@ -40,29 +41,33 @@ export enum SelectedAuthorModes {
   DELETE = 'delete this author',
   BACK = '<-',
 }
+
 export enum SelectedSeriesModes {
   UPDATE = 'update',
   VIEW_ALL_COMICS = 'view comics in series',
   DELETE = 'delete this series',
   BACK = '<-',
 }
+
 export enum SelectedComicsModes {
   UPDATE = 'update',
   VIEW_ALL_AUTHORS = 'view authors of comics',
   DELETE = 'delete this comics',
   BACK = '<-',
 }
+
 export enum ComicsModes {
   CREATE = 'Create new',
   BACK = '<-',
   LIST = 'List all comics',
   RANDOMIZE = 'Fill db with random data',
-  SEARCH = 'FTS by inner word',
+  SEARCH = 'FTS by phrase',
   BACK_SEARCH = 'FTS by absence word',
   SELECT = 'Select one comics',
   ADVANCED_SEARCH = 'Custom search',
   DROP = 'Clean DB',
 }
+
 export enum CharactersModes {
   CREATE = 'create new',
   BACK = 'back',
@@ -70,6 +75,7 @@ export enum CharactersModes {
   RANDOMIZE = 'fill db with random data',
   DROP = 'clean DB',
 }
+
 /**
  * PROMPTS
  */
@@ -77,47 +83,47 @@ export const menuPrompts = {
   menu: {
     name: 'mode',
     type: 'list',
-    message: "What's next?",
+    message: 'What\'s next?',
     choices: [
       MenuModes.OPERATIONS_WITH_COMICS,
       MenuModes.OPERATIONS_WITH_SERIES,
       // MenuModes.OPERATIONS_WITH_CHARACTERS,
       MenuModes.OPERATIONS_WITH_AUTHORS,
-      MenuModes.EXIT,
+      MenuModes.EXIT
     ],
-    default: 0,
-  },
+    default: 0
+  }
 };
 export const authorsPrompts = {
   menu: [
     {
       name: 'mode',
       type: 'list',
-      message: "What's next?",
+      message: 'What\'s next?',
       choices: [
         AuthorsModes.CREATE,
         AuthorsModes.LIST,
         AuthorsModes.RANDOMIZE,
         AuthorsModes.DROP,
         AuthorsModes.SELECT,
-        AuthorsModes.BACK,
+        AuthorsModes.BACK
       ],
-      default: 0,
-    },
+      default: 0
+    }
   ],
   create: [
     {
       name: 'name',
       type: 'input',
       message: 'Name:',
-      default: 'Stan Lee',
+      default: 'Stan Lee'
     },
     {
       name: 'gender',
       type: 'list',
       message: 'Gender:',
       choices: genders,
-      default: 'male',
+      default: 'male'
     },
     {
       name: 'country',
@@ -126,113 +132,119 @@ export const authorsPrompts = {
         return Promise.resolve(filterCountries(input));
       },
       message: 'Country:',
-      default: 'USA',
+      default: 'USA'
     },
     {
       name: 'dob',
       type: 'datetime',
       message: 'Date of birth:',
       format: ['d', '/', 'm', '/', 'yyyy'],
-      initial: new Date('1950-01-01'),
-    },
+      initial: new Date('1950-01-01')
+    }
   ],
   selectById: [
     {
-      filter: (input: string) => (input ? input.split('/')[0] : ''),
+      filter: (input: string) => (input ? +input.split('/')[0] : ''),
       name: 'authorId',
       type: 'autocomplete',
       source: async (__: any, input: string) => {
         if (input && input.length > 0) {
-          const rows = await Promise.resolve(db.authors.searchById(input));
-          return rows.map((row: IAuthor) => ({
-            value: `${row.id}/${row.name}`,
+          const rows = await Promise.resolve(
+              Author.query()
+                  .where(ref('Authors.id').castText(), 'like', `%${ input || '' }%`));
+          return rows.map((row: Author) => ({
+            value: `${ row.id }/${ row.name }`
           }));
         }
         return [];
       },
-      message: 'Id of author:',
-    },
-  ],
+      message: 'Id of author:'
+    }
+  ]
 };
 export const seriesPrompts = {
   menu: [
     {
       name: 'mode',
       type: 'list',
-      message: "What's next?",
+      message: 'What\'s next?',
       choices: [
         SeriesModes.CREATE,
         SeriesModes.LIST,
         SeriesModes.RANDOMIZE,
         SeriesModes.DROP,
         SeriesModes.SELECT,
-        SeriesModes.BACK,
+        SeriesModes.BACK
       ],
-      default: 0,
-    },
+      default: 0
+    }
   ],
   create: [
     {
       name: 'title',
       type: 'input',
-      message: 'Title:',
+      message: 'Title:'
     },
     {
       name: 'rating',
       type: 'number',
       max: 10,
       min: 1,
-      message: 'Rating:',
+      message: 'Rating:'
     },
     {
       filter: (input: string) => input === 'yes',
       name: 'isEnded',
       type: 'list',
       message: 'Is series ended:',
-      choices: ['yes', 'no'],
-    },
+      choices: ['yes', 'no']
+    }
   ],
   selectById: [
     {
-      filter: (input: string) => (input ? input.split('/')[0] : ''),
-      name: 'seriesId',
+      filter: (input: string) => (input ? +input.split('/')[0] : ''),
+      name: 'serieId',
       type: 'autocomplete',
       source: async (__: any, input: string) => {
         if (input && input.length > 0) {
-          const rows = await Promise.resolve(db.series.searchById(input));
-          return rows.map((row: ISeries) => ({
-            value: `${row.id}/${row.title}`,
+          const rows = await Promise.resolve(
+              Series.query()
+                  .where(ref('Series.id').castText(), 'like', `%${ input || '' }%`));
+          return rows.map((row: Series) => ({
+            value: `${ row.id }/${ row.title }`
           }));
         }
         return [];
       },
-      message: 'Id of author:',
-    },
-  ],
+      message: 'Id of series:'
+    }
+  ]
 };
 export const comicsPrompts = {
   selectById: [
     {
-      filter: (input: string) => (input ? input.split('/')[0] : ''),
+      filter: (input: string) => (input ? +input.split('/')[0] : ''),
       name: 'comicsId',
       type: 'autocomplete',
       source: async (__: any, input: string) => {
         if (input && input.length > 0) {
-          const rows = await Promise.resolve(db.comics.searchById(input));
-          return rows.map(row => ({
-            value: `${row.id}/${row.title}`,
+          const rows = await Promise.resolve(
+              Comics.query()
+                  .where(ref('Comics.id').castText(), 'like', `%${ input || '' }%`));
+          return rows.map((row: Comics) => ({
+            value: `${ row.id }/${ row.title }`
           }));
         }
         return [];
       },
-      message: 'Id of comics:',
-    },
+      message: 'Id of comics:'
+    }
   ],
   menu: [
     {
       name: 'mode',
       type: 'list',
-      message: "What's next?",
+      message: 'What\'s next?',
       choices: [
         ComicsModes.CREATE,
         ComicsModes.SEARCH,
@@ -242,172 +254,172 @@ export const comicsPrompts = {
         ComicsModes.DROP,
         ComicsModes.SELECT,
         ComicsModes.ADVANCED_SEARCH,
-        ComicsModes.BACK,
+        ComicsModes.BACK
       ],
-      default: 0,
-    },
+      default: 0
+    }
   ],
   create: [
     {
       name: 'title',
       type: 'input',
-      message: 'Title:',
+      message: 'Title:'
     },
     {
       name: 'category',
       type: 'list',
       message: 'Category:',
-      choices: comicsCategories,
+      choices: comicsCategories
     },
     {
       name: 'rating',
       type: 'number',
       max: 10,
       min: 1,
-      message: 'Rating:',
+      message: 'Rating:'
     },
     {
       filter: (input: string) => {
         if (input === prompts.emptyPromptAutocomplete) {
           return null;
         }
-        return input ? input.split('/')[0] : null;
+        return input ? +input.split('/')[0] : null;
       },
-      name: 'seriesId',
+      name: 'serieId',
       type: 'autocomplete',
       source: async (__: any, input: string) => {
         if (input && input.length > 0) {
-          const rows = await Promise.resolve(db.series.searchById(input));
-          return rows.map((row: ISeries) => ({
-            value: `${row.id}/${row.title}`,
+          const rows = await Promise.resolve(Series.query().where({ id: input }));
+          return rows.map((row: Series) => ({
+            value: `${ row.id }/${ row.title }`
           }));
         }
         return [prompts.emptyPromptAutocomplete];
       },
-      message: 'Id of series:',
+      message: 'Id of series:'
     },
     {
       name: 'publishDate',
       type: 'datetime',
       message: 'Publish date:',
       format: ['d', '/', 'm', '/', 'yyyy'],
-      initial: new Date('1950-01-01'),
-    },
+      initial: new Date('1950-01-01')
+    }
   ],
   advancedSearch: [
     {
       name: 'category',
       type: 'list',
       message: 'Category:',
-      choices: comicsCategories,
+      choices: comicsCategories
     },
     {
       filter: (input: string) => input === 'yes',
       name: 'isEnded',
       type: 'list',
       message: 'Is series ended:',
-      choices: ['yes', 'no'],
-    },
+      choices: ['yes', 'no']
+    }
   ],
   search: [
     {
       name: 'query',
       type: 'input',
-      message: 'What are you looking for?',
-    },
-  ],
+      message: 'What are you looking for?'
+    }
+  ]
 };
 export const charactersPrompts = {
   menu: [
     {
       name: 'mode',
       type: 'list',
-      message: "What's next?",
+      message: 'What\'s next?',
       choices: [
         CharactersModes.CREATE,
         CharactersModes.LIST,
         CharactersModes.RANDOMIZE,
         CharactersModes.DROP,
-        CharactersModes.BACK,
+        CharactersModes.BACK
       ],
-      default: 0,
-    },
+      default: 0
+    }
   ],
   create: [
     {
       name: 'nickname',
       type: 'input',
       message: 'Nickname:',
-      default: 'Batman',
+      default: 'Batman'
     },
     {
       name: 'name',
       type: 'input',
       message: 'Name:',
-      default: 'Bruce Wayne',
+      default: 'Bruce Wayne'
     },
     {
       name: 'gender',
       type: 'list',
       message: 'Gender:',
       choices: genders,
-      default: 'male',
+      default: 'male'
     },
     {
       name: 'skills',
       type: 'input',
-      message: 'Skills (in one line):',
+      message: 'Skills (in one line):'
     },
     {
       name: 'is_hero',
       type: 'confirm',
-      message: 'Is hero?',
+      message: 'Is hero?'
     },
     {
       name: 'dob',
       type: 'datetime',
       message: 'Date of birth:',
-      format: ['d', '/', 'm', '/', 'yyyy'],
-    },
-  ],
+      format: ['d', '/', 'm', '/', 'yyyy']
+    }
+  ]
 };
 export const selectedAuthorPrompts = {
   menu: [
     {
       name: 'mode',
       type: 'list',
-      message: "What's next?",
+      message: 'What\'s next?',
       choices: [
         SelectedAuthorModes.UPDATE,
         SelectedAuthorModes.ADD_COMICS,
         SelectedAuthorModes.DELETE_COMICS,
         SelectedAuthorModes.VIEW_ALL_COMICS,
         SelectedAuthorModes.DELETE,
-        SelectedAuthorModes.BACK,
+        SelectedAuthorModes.BACK
       ],
-      default: 0,
-    },
+      default: 0
+    }
   ],
   delete: [
     {
       name: 'confirm',
       type: 'confirm',
-      message: 'Are you sure?',
-    },
+      message: 'Are you sure?'
+    }
   ],
-  getUpdatePrompt: (author: IAuthor) => [
+  getUpdatePrompt: (author: Author) => [
     {
       name: 'name',
       type: 'input',
       message: 'Name:',
-      default: author.name,
+      default: author.name
     },
     {
       name: 'gender',
       type: 'list',
       message: 'Gender:',
       choices: genders,
-      default: author.gender,
+      default: author.gender
     },
     {
       name: 'country',
@@ -416,7 +428,7 @@ export const selectedAuthorPrompts = {
         return Promise.resolve(filterCountries(input));
       },
       message: 'Country:',
-      default: author.country,
+      default: author.country
     },
     {
       name: 'dob',
@@ -424,65 +436,62 @@ export const selectedAuthorPrompts = {
       message: 'Date of birth:',
       format: ['d', '/', 'm', '/', 'yyyy'],
       default: author.dob,
-      initial: author.dob,
-    },
+      initial: author.dob
+    }
   ],
-  getDeleteComicsByIdAndAuthor: (author: IAuthor) => [
+  // @ts-ignore
+  getDeleteComicsByIdAndAuthor: (author: Author) => [
     {
-      filter: (input: string) => (input ? input.split('/')[0] : ''),
+      filter: (input: string) => (input ? +input.split('/')[0] : ''),
       name: 'comicsId',
       type: 'autocomplete',
       source: async (__: any, input: string) => {
         if (input && input.length > 0) {
-          const rows = await Promise.resolve(
-            db.comicsAuthors.listComicsByIdAndAuthor(
-              input as any,
-              author.id as any,
-            ),
-          );
+          const rows = await author.$relatedQuery('comics')
+              .where(ref('Comics.id').castText(), 'like', `%${ input || '' }%`);
           return rows.map((row: any) => ({
-            value: `${row.id}/${row.title}`,
+            value: `${ row.id }/${ row.title }`
           }));
         }
         return [];
       },
-      message: 'Id of comics:',
+      message: 'Id of comics:'
     },
     {
       name: 'confirm',
       type: 'confirm',
-      message: 'Are you sure?',
-    },
-  ],
+      message: 'Are you sure?'
+    }
+  ]
 };
 export const selectedComicsPrompts = {
   menu: [
     {
       name: 'mode',
       type: 'list',
-      message: "What's next?",
+      message: 'What\'s next?',
       choices: [
         SelectedComicsModes.UPDATE,
         SelectedComicsModes.VIEW_ALL_AUTHORS,
         SelectedComicsModes.DELETE,
-        SelectedComicsModes.BACK,
+        SelectedComicsModes.BACK
       ],
-      default: 0,
-    },
+      default: 0
+    }
   ],
-  getUpdatePrompt: (comics: IComics) => [
+  getUpdatePrompt: (comics: Comics) => [
     {
       name: 'title',
       type: 'input',
       default: comics.title,
-      message: 'Title:',
+      message: 'Title:'
     },
     {
       name: 'category',
       type: 'list',
       message: 'Category:',
       default: comics.category,
-      choices: comicsCategories,
+      choices: comicsCategories
     },
     {
       name: 'rating',
@@ -490,74 +499,75 @@ export const selectedComicsPrompts = {
       max: 10,
       min: 1,
       default: comics.rating,
-      message: 'Rating:',
+      message: 'Rating:'
     },
     {
       filter: (input: string) => {
         if (input === prompts.emptyPromptAutocomplete) {
           return null;
         }
-        return input ? input.split('/')[0] : null;
+        return input ? +input.split('/')[0] : null;
       },
-      name: 'seriesId',
+      name: 'serieId',
       type: 'autocomplete',
       source: async (__: any, input: string) => {
         if (input && input.length > 0) {
-          const rows = await Promise.resolve(db.series.searchById(input));
-          return rows.map((row: ISeries) => ({
-            value: `${row.id}/${row.title}`,
+          const rows = await Promise.resolve(Series.query()
+              .where(ref('Series.id').castText(), 'like', `%${ input || '' }%`));
+          return rows.map((row: Series) => ({
+            value: `${ row.id }/${ row.title }`
           }));
         }
         return [prompts.emptyPromptAutocomplete];
       },
-      default: comics.serie_id,
-      message: 'Id of series:',
+      default: comics.serieId,
+      message: 'Id of series:'
     },
     {
       name: 'publishDate',
       type: 'datetime',
       message: 'Publish date:',
       format: ['d', '/', 'm', '/', 'yyyy'],
-      default: comics.publish_date,
-      initial: comics.publish_date,
-    },
+      default: comics.publishDate,
+      initial: comics.publishDate
+    }
   ],
   delete: [
     {
       name: 'confirm',
       type: 'confirm',
-      message: 'Are you sure?',
-    },
-  ],
+      message: 'Are you sure?'
+    }
+  ]
 };
 export const selectedSeriesPrompts = {
   menu: [
     {
       name: 'mode',
       type: 'list',
-      message: "What's next?",
+      message: 'What\'s next?',
       choices: [
         SelectedSeriesModes.UPDATE,
         SelectedSeriesModes.VIEW_ALL_COMICS,
         SelectedSeriesModes.DELETE,
-        SelectedSeriesModes.BACK,
+        SelectedSeriesModes.BACK
       ],
-      default: 0,
-    },
+      default: 0
+    }
   ],
   delete: [
     {
       name: 'confirm',
       type: 'confirm',
-      message: 'Are you sure?',
-    },
+      message: 'Are you sure?'
+    }
   ],
-  getUpdatePrompt: (series: ISeries) => [
+  getUpdatePrompt: (series: Series) => [
     {
       name: 'title',
       type: 'input',
       default: series.title,
-      message: 'Title:',
+      message: 'Title:'
     },
     {
       name: 'rating',
@@ -565,17 +575,17 @@ export const selectedSeriesPrompts = {
       max: 10,
       min: 1,
       default: series.rating,
-      message: 'Rating:',
+      message: 'Rating:'
     },
     {
       filter: (input: string) => input === 'yes',
       name: 'isEnded',
       type: 'list',
-      default: series.is_ended,
+      default: series.isEnded,
       message: 'Is series ended:',
-      choices: ['yes', 'no'],
-    },
-  ],
+      choices: ['yes', 'no']
+    }
+  ]
 };
 
 export const randomizeEntitiesPromptItems: any = [
@@ -586,6 +596,6 @@ export const randomizeEntitiesPromptItems: any = [
     min: 1,
     default: 1,
     initial: 1,
-    message: 'Count:',
-  },
+    message: 'Count:'
+  }
 ];

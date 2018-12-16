@@ -9,6 +9,8 @@
   "rules": {
     "no-console": false,
     "member-access": false,
+    "trailing-comma": false,
+    "no-increment-decrement": false,
     "no-parameter-reassignment": false,
     "no-var-requires": false,
     "object-literal-sort-keys": false,
@@ -16,7 +18,14 @@
     "interface-name": false,
     "no-submodule-imports": false,
     "jsx-no-lambda": false,
-    "quotemark": [true, "single", "avoid-escape", "avoid-template"]
+    "align": false,
+    "ter-indent": false,
+    "quotemark": [
+      true,
+      "single",
+      "avoid-escape",
+      "avoid-template"
+    ]
   },
   "rulesDirectory": []
 }

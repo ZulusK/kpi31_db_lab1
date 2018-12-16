@@ -2,68 +2,68 @@ const clear = require('clear');
 import * as inquirer from 'inquirer';
 import chalk from 'chalk';
 import * as figlet from 'figlet';
-import * as _ from 'lodash';
-import { db } from '../db';
 import TableView from '../views/TableView';
-import InteractiveTableView, {
-  IListFunctionArgs,
-} from '../views/InteractiveTableView';
+import InteractiveTableView, { IListFunctionArgs } from '../views/InteractiveTableView';
 import { SelectedComicsModes, selectedComicsPrompts } from './prompts';
-import { IComics } from '../db/models/comics/comics.model';
+import { Comics } from '../db/models';
 
 export async function start(selectedComicsId: string) {
   clear();
   console.log(chalk.cyan(figlet.textSync('Comics', { font: 'Isometric3' })));
-  let comics = await db.comics.findById(selectedComicsId);
-  while (true) {
-    console.log(TableView.buildTable([comics]));
-    const answers: any = await inquirer.prompt(selectedComicsPrompts.menu);
-    switch (answers.mode) {
-      case SelectedComicsModes.UPDATE:
-        await update(comics);
-        comics = await db.comics.findById(selectedComicsId);
-        break;
-      case SelectedComicsModes.VIEW_ALL_AUTHORS:
-        await interactiveListAuthors(comics);
-        break;
-      case SelectedComicsModes.DELETE:
-        if (await deleteSelected(comics)) {
+  const comics = await Comics.query().findById(selectedComicsId);
+  if (comics) {
+    while (true) {
+      console.log(TableView.buildTable([comics]));
+      const answers: any = await inquirer.prompt(selectedComicsPrompts.menu);
+      switch (answers.mode) {
+        case SelectedComicsModes.UPDATE:
+          await update(comics);
+          // comics = await Comics.query().findById(selectedComicsId);
+          break;
+        case SelectedComicsModes.VIEW_ALL_AUTHORS:
+          await interactiveListAuthors(comics);
+          break;
+        case SelectedComicsModes.DELETE:
+          if (await deleteSelected(comics)) {
+            return;
+          }
+          break;
+        case SelectedComicsModes.BACK:
           return;
-        }
-        break;
-      case SelectedComicsModes.BACK:
-        return;
+      }
     }
   }
-}
-async function update(comics: IComics) {
-  const answers: any = await inquirer.prompt(
-    selectedComicsPrompts.getUpdatePrompt(comics),
-  );
-  await db.comics.updateById(comics.id as any, answers);
+  clear();
+  console.log('No such comics exists');
 }
 
-function listAuthors(comics: IComics) {
+async function update(comics: Comics) {
+  const answers: any = await inquirer.prompt(
+      selectedComicsPrompts.getUpdatePrompt(comics)
+  );
+  await comics.$query().patch(answers);
+}
+
+function listAuthors(comics: Comics) {
   return async ({ limit, offset }: IListFunctionArgs) => {
     console.log(
-      TableView.buildTable(
-        await db.comicsAuthors.listAuthorsOfComics(comics.id || 0, {
-          limit,
-          offset,
-        }),
-      ),
+        TableView.buildTable(
+            await comics.$relatedQuery('authors')
+                .limit(limit)
+                .offset(offset)
+        )
     );
   };
 }
 
-function interactiveListAuthors(comics: IComics) {
+function interactiveListAuthors(comics: Comics) {
   return InteractiveTableView.display(listAuthors(comics), 0, 10);
 }
 
-async function deleteSelected(comics: IComics): Promise<boolean> {
+async function deleteSelected(comics: Comics): Promise<boolean> {
   const answers = (await inquirer.prompt(selectedComicsPrompts.delete)) as any;
   if (answers.confirm) {
-    await db.comics.deleteById(comics.id as any);
+    await comics.$query().delete();
     return true;
   }
   return false;

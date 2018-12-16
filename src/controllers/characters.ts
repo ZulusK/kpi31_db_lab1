@@ -1,23 +1,23 @@
 const clear = require('clear');
 import * as inquirer from 'inquirer';
-import { db } from '../db';
 import chalk from 'chalk';
 import * as figlet from 'figlet';
 import InteractiveTableView, {
-  IListFunctionArgs,
+  IListFunctionArgs
 } from '../views/InteractiveTableView';
 import TableView from '../views/TableView';
 import { characters } from '../utils';
 import {
   CharactersModes,
   randomizeEntitiesPromptItems,
-  charactersPrompts,
+  charactersPrompts
 } from './prompts';
+import { Character } from '../db';
 
 export async function start() {
   clear();
   console.log(
-    chalk.magentaBright(figlet.textSync('Characters', { font: 'Isometric3' })),
+      chalk.magentaBright(figlet.textSync('Characters', { font: 'Isometric3' }))
   );
   while (true) {
     const answers: any = await inquirer.prompt(charactersPrompts.menu);
@@ -42,21 +42,22 @@ export async function start() {
 
 async function createCharacter() {
   const answers: any = await inquirer.prompt(charactersPrompts.create);
-  console.log(TableView.buildTable([await db.characters.insertOne(answers)]));
+  const character = await Character.query().insertAndFetch(answers);
+  console.log(TableView.buildTable([character]));
 }
 
 async function listCharacters({ offset, limit }: IListFunctionArgs) {
-  const list = await db.characters.list({ offset, limit });
-  const total = await db.characters.total();
+  const list = await Character.query().offset(offset).limit(limit);
+  const total = await Character.query().count();
   clear();
   console.log(TableView.buildTable(list));
   console.log(
-    chalk.cyan('total:'),
-    total,
-    chalk.red('limit:'),
-    limit,
-    chalk.magenta('offset:'),
-    offset,
+      chalk.cyan('total:'),
+      total,
+      chalk.red('limit:'),
+      limit,
+      chalk.magenta('offset:'),
+      offset
   );
 }
 
@@ -67,20 +68,21 @@ function interactiveList() {
 async function randomize() {
   const answers: any = await inquirer.prompt(randomizeEntitiesPromptItems);
   const charactersRandomData = Array.from(
-    { length: answers.count },
-    characters.randomData,
+      { length: answers.count },
+      characters.randomData
   );
+  const createdCharacters = await Character.query().insertAndFetch(charactersRandomData);
   console.log(
-    TableView.buildTable(await db.characters.insertMany(charactersRandomData)),
+      TableView.buildTable(createdCharacters)
   );
 }
 
 async function drop() {
   const answers: any = await inquirer.prompt({
     name: 'confirm',
-    type: 'confirm',
+    type: 'confirm'
   });
   if (answers.confirm) {
-    console.log(TableView.buildTable(await db.comics.empty()));
+    console.log(TableView.buildTable(await Character.query().del()));
   }
 }
