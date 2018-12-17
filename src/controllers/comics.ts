@@ -26,6 +26,9 @@ export async function start() {
       case ComicsModes.SEARCH:
         await search();
         break;
+      case ComicsModes.STARS:
+        await stars();
+        break;
       case ComicsModes.BACK_SEARCH:
         await backSearch();
         break;
@@ -72,6 +75,13 @@ async function listComics({ offset, limit }: IListFunctionArgs) {
       chalk.magenta('offset:'),
       offset
   );
+}
+
+async function stars() {
+  console.log(TableView.buildTable(
+      await Comics
+          .query()
+          .select('*').from(raw('calculate_stars()'))));
 }
 
 function interactiveList() {

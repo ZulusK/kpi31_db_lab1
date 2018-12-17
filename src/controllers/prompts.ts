@@ -65,6 +65,7 @@ export enum ComicsModes {
   BACK_SEARCH = 'FTS by absence word',
   SELECT = 'Select one comics',
   ADVANCED_SEARCH = 'Custom search',
+  STARS = 'Rating',
   DROP = 'Clean DB',
 }
 
@@ -252,6 +253,7 @@ export const comicsPrompts = {
         ComicsModes.LIST,
         ComicsModes.RANDOMIZE,
         ComicsModes.DROP,
+        ComicsModes.STARS,
         ComicsModes.SELECT,
         ComicsModes.ADVANCED_SEARCH,
         ComicsModes.BACK
